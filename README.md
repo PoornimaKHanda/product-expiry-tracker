@@ -1,55 +1,97 @@
-# 📦 Product Expiry Tracker
+# 📦 Product Expiry & Warranty Tracker
 
-A lightweight, privacy-first mobile utility app to track product expiry dates (makeup, skincare, personal care, etc.) and receive timely reminders — **fully offline, no backend, no accounts**.
+A lightweight, privacy‑first **mobile utility app** to track **product expiry dates** (makeup, skincare, medicines, consumables) **and long‑term product warranties** (electronics, tools, appliances) — with timely reminders.
 
-This project is built as a **hobby + learning project** and is designed to be long‑lived (3–5+ years), similar to system utilities like Calculator or Calendar.
+The app is designed to be **offline‑first, long‑lived (3–5+ years)** and behave like a system utility (Calculator / Calendar): install once, forget about it, get notified when needed.
+
+No backend. No accounts. No ads. No tracking.
 
 ---
 
 ## ✨ Why this app exists
 
-Keeping track of expiry dates on makeup and personal care products is tedious and error‑prone. This app solves that by:
+People often forget:
 
-- Tracking product expiry locally on-device
-- Sending reminder notifications before and on expiry
-- Minimizing permissions and attack surface
-- Working fully offline
+* When makeup or skincare expires after opening
+* When an expensive product’s warranty is about to end
+* Where the receipt or warranty registration is stored
 
-No cloud. No ads. No trackers.
+This app solves that by:
+
+* Tracking **time‑bound product lifecycles** locally
+* Sending **local notifications** before important dates
+* Storing **receipts / registrations** securely on device
+* Minimizing permissions and security risk
 
 ---
 
 ## 🧠 Core Principles
 
-- **Offline‑first**: All data stored on device
-- **Privacy‑first**: No internet access, no backend
-- **Minimal permissions**: Camera & notifications only (when needed)
-- **Longevity**: Stable storage (SQLite), OS‑level scheduling
+* **Offline‑first** – All data stored on device
+* **Privacy‑first** – No internet access, no backend
+* **Minimal permissions** – Camera & notifications only when required
+* **Longevity** – Stable local storage, OS‑level scheduling
+* **Reusable design** – One model for expiry & warranty tracking
 
 ---
 
-## 📱 Features (Planned & In Progress)
+## 📱 Features
 
-### MVP
+### ✅ Core Tracking (MVP)
 
-- Add products with name, category, opened date
-- Automatic expiry calculation (based on shelf life)
-- Local notifications:
-  - 30 days before expiry
-  - On expiry day
-- View products expiring soon
+* Track **product expiries** (makeup, skincare, medicines, food items)
+* Track **product warranties** (electronics, tools, appliances)
+* Unified item model for both expiry & warranty
+* Categorization (Makeup, Skincare, Electronics, Tools, etc.)
 
-### Smart Assist (Incremental)
+### ⏰ Smart Reminders
 
-- Capture product photo
-- OCR to detect product name / brand
-- Auto‑suggest product category
+* Notifications:
 
-### Optional Enhancements
+  * 30 days before expiry / warranty end
+  * 7 days before (configurable later)
+  * On the exact end date
+* Works fully offline using OS scheduler
 
-- Barcode scan (best‑effort metadata)
-- Product photos
-- Repurchase reminder during sales
+### 🧾 Records & Attachments
+
+* Attach purchase receipts / warranty registrations
+* Store product photos (optional)
+* Optional notes per item
+
+### 🤖 Smart Assist (Incremental)
+
+* Capture product photo
+* On‑device OCR to detect product name / brand
+* Auto‑suggest category (best‑effort)
+
+---
+
+## 🧱 Data Model (Core Design)
+
+All functionality is built around a single abstraction:
+
+```
+TrackableItem
+```
+
+```
+TrackableItem {
+  id: string
+  name: string
+  category: string
+  type: 'EXPIRY' | 'WARRANTY'
+
+  startDate: Date      // opened date or purchase date
+  endDate: Date        // expiry date or warranty end date
+
+  reminderOffsets: number[]  // days before end date
+  attachments?: string[]     // receipt / registration images
+  notes?: string
+}
+```
+
+This avoids duplication and allows the app to scale cleanly.
 
 ---
 
@@ -57,10 +99,11 @@ No cloud. No ads. No trackers.
 
 ```
 Mobile App (React Native + Expo)
- ├── UI (Screens & Components)
+ ├── UI (Screens & Reusable Components)
+ ├── Theme & Shared Styles
  ├── Storage (SQLite)
  ├── Notifications (OS Scheduler)
- ├── Camera + OCR (On-device)
+ ├── Camera & Attachments (On‑device)
  └── No Backend / No Network
 ```
 
@@ -70,69 +113,96 @@ This architecture intentionally avoids servers to reduce complexity, cost, and s
 
 ## 🛠️ Tech Stack
 
-- **React Native** (cross‑platform: Android + iOS)
-- **Expo (Managed Workflow)**
-- **TypeScript**
-- **Expo Router** (navigation)
-- **expo-sqlite** (local persistence)
-- **expo-notifications** (local reminders)
-- **expo-camera** (photo capture)
-- **On-device OCR** (planned)
+* **React Native** (Android + iOS)
+* **Expo (Managed Workflow)**
+* **TypeScript**
+* **Expo Router** (navigation)
+* **expo‑sqlite** (local persistence)
+* **expo‑notifications** (local reminders)
+* **expo‑camera** (photo capture)
+* **On‑device OCR** (planned)
 
 ---
 
 ## 🔐 Security & Privacy
 
-- No network permission
-- No backend APIs
-- No authentication
-- No third‑party trackers
-- Data stored in app sandbox only
+* No network permission
+* No backend APIs
+* No authentication
+* No third‑party trackers
+* Data stored only in app sandbox
 
 Attack surface is intentionally minimal.
 
 ---
 
-## 🚀 Development Setup
+## 🚀 Development Workflow (Step‑by‑Step)
+
+This project is built **incrementally**, suitable for weekend / holiday development.
+
+### Phase 1 – Foundation
+
+* Initialize Expo + TypeScript project
+* Setup shared theme & reusable styles
+* Build Home screen UI
+
+### Phase 2 – Core Functionality
+
+* Define TrackableItem data model
+* Local storage using SQLite
+* Add / Edit / Delete items
+
+### Phase 3 – Notifications
+
+* Calculate reminder dates
+* Schedule local notifications
+* Handle permission prompts gracefully
+
+### Phase 4 – Attachments
+
+* Camera permission on demand
+* Store receipt / registration images
+
+### Phase 5 – Smart Assist (Optional)
+
+* OCR for product name detection
+* Barcode scan (best‑effort metadata)
+
+---
+
+## 🧑‍💻 Local Development Setup
 
 ### Prerequisites
 
-- Node.js (LTS)
-- VS Code
-- Expo Go app (Android / iOS)
+* Node.js (LTS)
+* VS Code
+* Expo Go app (Android / iOS)
 
 ### Run locally
 
 ```bash
 npm install
 npm start
-npm start -- --tunnel
-```
-
-or
-
-```bash
-npm start -- --tunnel
 ```
 
 Scan the QR code using **Expo Go**.
 
-> ⚠️ Expo Go is used only for development. The final app will be built as a standalone APK / iOS app.
+> Expo Go is used **only for development**. The final app will be built as a standalone APK / iOS app.
 
 ---
 
 ## 📦 Deployment (Planned)
 
-- Standalone Android APK (sideloaded or Play Store)
-- iOS build via TestFlight (optional)
+* Standalone Android APK (sideloaded or Play Store)
+* iOS build via TestFlight (optional)
 
-Once installed, the app behaves like a system utility and does not expire.
+Once installed, the app behaves like a system utility and does **not expire**.
 
 ---
 
 ## 📌 Resume Positioning
 
-**Product Expiry Tracker** — Offline‑first mobile utility built with React Native and Expo, leveraging on‑device storage, local notifications, and camera‑based OCR to track product shelf life while minimizing security and privacy risks.
+**Product Expiry & Warranty Tracker** — Designed and built a cross‑platform, offline‑first mobile utility using React Native and Expo to track product expiries and long‑term warranties with local persistence, notifications, and document storage, while minimizing security and privacy risks.
 
 ---
 
