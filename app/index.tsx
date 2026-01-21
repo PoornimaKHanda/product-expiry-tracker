@@ -1,7 +1,7 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppButton } from "@/components/AppButton";
 import { ItemCard } from "../components/ItemCard";
@@ -22,6 +22,7 @@ type Product = {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [expiringSoon, setExpiringSoon] = useState<Product[]>([]);
   const [warrantyEndingSoon, setWarrantyEndingSoon] = useState<Product[]>([]);
 
@@ -54,7 +55,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
+    <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>
       <ScrollView style={CommonStyles.screen}>
         {/* Header */}
         <Text style={Typography.title}>Product Expiry & Warranty Tracker</Text>
@@ -96,11 +97,13 @@ export default function HomeScreen() {
         <View style={{ height: 80 }} />
       </ScrollView>
 
-      <AppButton
-        kind="floating"
-        label="＋"
-        onPress={() => router.push("/add-item")}
-      />
+      <View style={{ marginBottom: insets.bottom + 16 }}>
+        <AppButton
+          kind="floating"
+          label="＋"
+          onPress={() => router.push("/add-item")}
+        />
+      </View>
     </SafeAreaView>
   );
 }
