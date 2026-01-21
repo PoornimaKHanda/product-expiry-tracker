@@ -57,13 +57,13 @@ export default function AddItemScreen() {
         <FormDatePicker
           label={isExpiry ? "Opened / Purchase Date" : "Purchase Date"}
           date={startDate}
-          onPress={() => {}}
+          onChange={(d) => setStartDate(d.toISOString().split("T")[0])}
         />
 
         <FormDatePicker
           label={isExpiry ? "Expiry Date" : "Warranty End Date"}
           date={endDate}
-          onPress={() => {}}
+          onChange={(d) => setEndDate(d.toISOString().split("T")[0])}
         />
 
         <FormInput
