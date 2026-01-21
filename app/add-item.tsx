@@ -1,7 +1,6 @@
-import { RadioGroup } from "@/components/RadioGroup";
+import { AppButton } from "@/components/AppButton";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { FloatingButton } from "../components/FloatingButton";
 import { FormDatePicker } from "../components/FormDatePicker";
 import { FormInput } from "../components/FormInput";
 import { CommonStyles } from "../styles/common";
@@ -45,7 +44,8 @@ export default function AddItemScreen() {
         />
 
         {/* Expiry / Warranty toggle */}
-        <RadioGroup
+        <AppButton
+          kind="radio"
           options={[
             { label: "Expiry", value: "expiry" },
             { label: "Warranty", value: "warranty" },
@@ -74,7 +74,7 @@ export default function AddItemScreen() {
         />
       </ScrollView>
 
-      <FloatingButton onPress={onSave} />
+      <AppButton kind="full" label="Save" onPress={onSave} />
     </View>
   );
 }

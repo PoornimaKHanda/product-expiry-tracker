@@ -1,11 +1,11 @@
 import { useRouter } from "expo-router";
 import { ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FloatingButton } from "../components/FloatingButton";
 import { ItemCard } from "../components/ItemCard";
 import { SectionHeader } from "../components/SectionHeader";
 import { CommonStyles } from "../styles/common";
 import { Typography } from "../theme/typography";
+import { AppButton } from "@/components/AppButton";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -43,7 +43,11 @@ export default function HomeScreen() {
           dateLabel="Warranty ends on 12 Mar 2026"
         />
       </ScrollView>
-      <FloatingButton onPress={() => router.push("/add-item")} />
+      <AppButton
+        kind="floating"
+        label="＋"
+        onPress={() => router.push("/add-item")}
+      />
     </SafeAreaView>
   );
 }
