@@ -6,6 +6,8 @@ import { FormInput } from "../components/FormInput";
 import { CommonStyles } from "../styles/common";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
+import { insertProduct } from "@/utils/db";
+import { router } from "expo-router";
 
 export default function AddItemScreen() {
   const [name, setName] = useState("");
@@ -16,8 +18,16 @@ export default function AddItemScreen() {
   const [notes, setNotes] = useState("");
 
   const onSave = () => {
-    // Placeholder: actual storage comes later
-    console.log({ name, category, isExpiry, startDate, endDate, notes });
+    insertProduct(
+      name,
+      category,
+      isExpiry ? "expiry" : "warranty",
+      startDate!,
+      endDate!,
+      notes
+    );
+
+    router.back();
   };
 
   return (
