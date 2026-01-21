@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -25,24 +25,32 @@ export default function HomeScreen() {
   const [expiringSoon, setExpiringSoon] = useState<Product[]>([]);
   const [warrantyEndingSoon, setWarrantyEndingSoon] = useState<Product[]>([]);
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
+  // 🔑 Reload every time screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadProducts();
+    }, [])
+  );
 
-  const loadProducts = () => {
-    const products = fetchAllProducts();
+  const loadProducts = async () => {
+    const products = await fetchAllProducts();
 
-    setExpiringSoon(
-      products.filter(
-        (p) => p.type === "expiry" && isWithinNextDays(p.end_date, 30)
-      )
-    );
+    const expiring = products
+      .filter((p) => p.type === "expiry" && isWithinNextDays(p.end_date, 30))
+      .sort(
+        (a, b) =>
+          new Date(a.end_date).getTime() - new Date(b.end_date).getTime()
+      );
 
-    setWarrantyEndingSoon(
-      products.filter(
-        (p) => p.type === "warranty" && isWithinNextDays(p.end_date, 30)
-      )
-    );
+    const warranty = products
+      .filter((p) => p.type === "warranty" && isWithinNextDays(p.end_date, 30))
+      .sort(
+        (a, b) =>
+          new Date(a.end_date).getTime() - new Date(b.end_date).getTime()
+      );
+
+    setExpiringSoon(expiring);
+    setWarrantyEndingSoon(warranty);
   };
 
   return (
@@ -53,6 +61,7 @@ export default function HomeScreen() {
         <Text style={Typography.subtitle}>
           Track expiries and warranties without effort
         </Text>
+
         {/* Expiry Section */}
         <SectionHeader title="EXPIRING SOON" />
         {expiringSoon.length === 0 ? (
@@ -67,6 +76,7 @@ export default function HomeScreen() {
             />
           ))
         )}
+
         {/* Warranty Section */}
         <SectionHeader title="WARRANTY ENDING SOON" />
         {warrantyEndingSoon.length === 0 ? (
@@ -81,6 +91,8 @@ export default function HomeScreen() {
             />
           ))
         )}
+
+        {/* Bottom spacing for FAB */}
         <View style={{ height: 80 }} />
       </ScrollView>
 

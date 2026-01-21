@@ -1,13 +1,14 @@
 import { AppButton } from "@/components/AppButton";
+import { insertProduct } from "@/utils/db";
+import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { FormDatePicker } from "../components/FormDatePicker";
 import { FormInput } from "../components/FormInput";
 import { CommonStyles } from "../styles/common";
 import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
-import { insertProduct } from "@/utils/db";
-import { router } from "expo-router";
 
 export default function AddItemScreen() {
   const [name, setName] = useState("");
@@ -17,17 +18,19 @@ export default function AddItemScreen() {
   const [endDate, setEndDate] = useState<string | undefined>();
   const [notes, setNotes] = useState("");
 
-  const onSave = () => {
-    insertProduct(
+  const onSave = async () => {
+    if (!name || !startDate || !endDate) return;
+
+    await insertProduct(
       name,
       category,
       isExpiry ? "expiry" : "warranty",
-      startDate!,
-      endDate!,
+      startDate,
+      endDate,
       notes
     );
 
-    router.back();
+    router.back(); // 🔑 triggers Home focus
   };
 
   return (
@@ -84,7 +87,9 @@ export default function AddItemScreen() {
         />
       </ScrollView>
 
-      <AppButton kind="full" label="Save" onPress={onSave} />
+      <SafeAreaView edges={["bottom"]}>
+        <AppButton kind="full" label="Save" onPress={onSave} />
+      </SafeAreaView>
     </View>
   );
 }
