@@ -52,3 +52,46 @@ export const fetchAllProducts = (): Array<{
         notes: string;
     }>;
 };
+
+export const fetchProductById = (id: number): {
+    id: number;
+    name: string;
+    category: string;
+    type: 'expiry' | 'warranty';
+    start_date: string;
+    end_date: string;
+    notes: string;
+} | null => {
+    const result = db.getFirstSync(
+        `SELECT * FROM products WHERE id = ?`,
+        [id]
+    ) as {
+        id: number;
+        name: string;
+        category: string;
+        type: 'expiry' | 'warranty';
+        start_date: string;
+        end_date: string;
+        notes: string;
+    } | null;
+    return result || null;
+};
+
+export const updateProduct = (
+    id: number,
+    name: string,
+    category: string,
+    type: 'expiry' | 'warranty',
+    startDate: string,
+    endDate: string,
+    notes: string
+) => {
+    db.runSync(
+        `UPDATE products SET name = ?, category = ?, type = ?, start_date = ?, end_date = ?, notes = ? WHERE id = ?`,
+        [name, category, type, startDate, endDate, notes, id]
+    );
+};
+
+export const deleteProductById = async (id: number) => {
+    await db.runAsync(`DELETE FROM products WHERE id = ?`, [id]);
+};
