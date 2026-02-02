@@ -2,8 +2,9 @@ import { AppButton } from "@/components/AppButton";
 import { fetchProductById, insertProduct, updateProduct } from "@/utils/db";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, View, Alert } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { CategoryPicker } from "../components/CategoryPicker";
 import { FormDatePicker } from "../components/FormDatePicker";
 import { FormInput } from "../components/FormInput";
 import { CommonStyles } from "../styles/common";
@@ -111,12 +112,7 @@ export default function AddItemScreen() {
           onChangeText={setName}
         />
 
-        <FormInput
-          label="Category"
-          placeholder="Makeup, Skincare, Electronics..."
-          value={category}
-          onChangeText={setCategory}
-        />
+        <CategoryPicker value={category} onChange={setCategory} />
 
         {/* Expiry / Warranty toggle */}
         <AppButton
