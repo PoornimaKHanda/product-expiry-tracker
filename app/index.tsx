@@ -1,16 +1,20 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScrollView, Text, View, Alert } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import { AppButton } from "@/components/AppButton";
+import { ItemActionSheet } from "../components/ItemActionSheet";
 import { ItemCard } from "../components/ItemCard";
 import { SectionHeader } from "../components/SectionHeader";
 import { CommonStyles } from "../styles/common";
 import { Typography } from "../theme/typography";
 
 import { formatDate, isWithinNextDays } from "../utils/date";
-import { fetchAllProducts } from "../utils/db";
+import { fetchAllProducts, deleteProductById } from "../utils/db";
 
 type Product = {
   id: number;
@@ -23,8 +27,16 @@ type Product = {
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const [actionSheetVisible, setActionSheetVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Product | null>(null);
+  const [showSheet, setShowSheet] = useState(false);
+
   const [expiringSoon, setExpiringSoon] = useState<Product[]>([]);
   const [warrantyEndingSoon, setWarrantyEndingSoon] = useState<Product[]>([]);
+  const openActions = (item: Product) => {
+    setSelectedItem(item);
+    setShowSheet(true);
+  };
 
   // 🔑 Reload every time screen comes into focus
   useFocusEffect(
@@ -74,6 +86,7 @@ export default function HomeScreen() {
               name={item.name}
               subtitle={item.category}
               dateLabel={`Expires on ${formatDate(item.end_date)}`}
+              onMenuPress={() => openActions(item)}
             />
           ))
         )}
@@ -89,6 +102,7 @@ export default function HomeScreen() {
               name={item.name}
               subtitle={item.category}
               dateLabel={`Warranty ends on ${formatDate(item.end_date)}`}
+              onMenuPress={() => openActions(item)}
             />
           ))
         )}
@@ -104,6 +118,36 @@ export default function HomeScreen() {
           onPress={() => router.push("/add-item")}
         />
       </View>
+      <ItemActionSheet
+        visible={showSheet}
+        onClose={() => setShowSheet(false)}
+        onEdit={() => {
+          if (!selectedItem) return;
+          setShowSheet(false);
+
+          router.push({
+            pathname: "/add-item",
+            params: { id: selectedItem.id },
+          });
+        }}
+        onDelete={() => {
+          if (!selectedItem) return;
+
+          Alert.alert("Delete Item", "This cannot be undone.", [
+            { text: "Cancel" },
+            {
+              text: "Delete",
+              style: "destructive",
+              onPress: async () => {
+                await deleteProductById(selectedItem.id);
+                loadProducts();
+              },
+            },
+          ]);
+
+          setShowSheet(false);
+        }}
+      />
     </SafeAreaView>
   );
 }

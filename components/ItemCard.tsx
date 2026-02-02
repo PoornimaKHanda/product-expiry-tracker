@@ -1,24 +1,35 @@
-import { View, Text } from "react-native";
-import { CommonStyles } from "../styles/common";
-import { Typography } from "../theme/typography";
-import { Colors } from "../theme/colors";
+import { Ionicons } from "@expo/vector-icons";
+import { Pressable, Text, View } from "react-native";
 
 type Props = {
   name: string;
   subtitle: string;
   dateLabel: string;
+  onMenuPress?: () => void;
 };
 
-export function ItemCard({ name, subtitle, dateLabel }: Props) {
+export function ItemCard({ name, subtitle, dateLabel, onMenuPress }: Props) {
   return (
-    <View style={CommonStyles.card}>
-      <Text style={Typography.body}>{name}</Text>
+    <View
+      style={{
+        backgroundColor: "#fff",
+        padding: 14,
+        borderRadius: 12,
+        marginBottom: 12,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontSize: 16, fontWeight: "600" }}>{name}</Text>
+        <Text style={{ opacity: 0.6 }}>{subtitle}</Text>
+        <Text style={{ marginTop: 4 }}>{dateLabel}</Text>
+      </View>
 
-      <Text style={{ marginTop: 4, color: Colors.textSecondary }}>
-        {subtitle}
-      </Text>
-
-      <Text style={{ marginTop: 6, color: Colors.danger }}>{dateLabel}</Text>
+      <Pressable onPress={onMenuPress} hitSlop={10}>
+        <Ionicons name="ellipsis-vertical" size={22} />
+      </Pressable>
     </View>
   );
 }

@@ -1,8 +1,8 @@
 import { AppButton } from "@/components/AppButton";
-import { insertProduct } from "@/utils/db";
-import { router } from "expo-router";
-import { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { fetchProductById, insertProduct, updateProduct } from "@/utils/db";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { ScrollView, Text, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FormDatePicker } from "../components/FormDatePicker";
 import { FormInput } from "../components/FormInput";
@@ -11,6 +11,9 @@ import { Spacing } from "../theme/spacing";
 import { Typography } from "../theme/typography";
 
 export default function AddItemScreen() {
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const isEdit = Boolean(id);
+
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [isExpiry, setIsExpiry] = useState(true);
@@ -18,28 +21,87 @@ export default function AddItemScreen() {
   const [endDate, setEndDate] = useState<string | undefined>();
   const [notes, setNotes] = useState("");
 
-  const onSave = async () => {
-    if (!name || !startDate || !endDate) return;
+  // -------------------------
+  // Prefill if editing
+  // -------------------------
+  useEffect(() => {
+    if (isEdit && id) {
+      const product = fetchProductById(Number(id));
 
-    await insertProduct(
-      name,
-      category,
-      isExpiry ? "expiry" : "warranty",
-      startDate,
-      endDate,
-      notes
-    );
+      if (!product) {
+        Alert.alert("Item not found");
+        router.back();
+        return;
+      }
 
-    router.back(); // 🔑 triggers Home focus
+      setName(product.name);
+      setCategory(product.category || "");
+      setIsExpiry(product.type === "expiry");
+      setStartDate(product.start_date);
+      setEndDate(product.end_date);
+      setNotes(product.notes || "");
+    }
+  }, [id, isEdit]);
+
+  // -------------------------
+  // Save
+  // -------------------------
+  const onSave = () => {
+    if (!name || !startDate || !endDate) {
+      Alert.alert("Please fill required fields");
+      return;
+    }
+
+    try {
+      if (isEdit && id) {
+        updateProduct(
+          Number(id),
+          name,
+          category,
+          isExpiry ? "expiry" : "warranty",
+          startDate,
+          endDate,
+          notes,
+        );
+      } else {
+        insertProduct(
+          name,
+          category,
+          isExpiry ? "expiry" : "warranty",
+          startDate,
+          endDate,
+          notes,
+        );
+      }
+
+      router.back();
+    } catch (e) {
+      Alert.alert("Error saving item");
+    }
   };
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={CommonStyles.screen}>
-        <Text style={Typography.title}>Add Item</Text>
+        <Text style={Typography.title}>
+          {isEdit ? "Edit Item" : "Add Item"}
+        </Text>
+
+        <Text
+          style={{
+            color: "#6b7280",
+            fontSize: 12,
+            marginTop: 4,
+            marginBottom: 8,
+          }}
+        >
+          {isEdit ? "Edit mode" : "Add mode"}
+        </Text>
 
         <Text style={{ ...Typography.subtitle, marginBottom: Spacing.md }}>
-          Track product expiry or warranty
+          {isEdit
+            ? "Update product details"
+            : "Track product expiry or warranty"}
         </Text>
 
         <FormInput
@@ -88,7 +150,11 @@ export default function AddItemScreen() {
       </ScrollView>
 
       <SafeAreaView edges={["bottom"]}>
-        <AppButton kind="full" label="Save" onPress={onSave} />
+        <AppButton
+          kind="full"
+          label={isEdit ? "Update" : "Save"}
+          onPress={onSave}
+        />
       </SafeAreaView>
     </View>
   );
