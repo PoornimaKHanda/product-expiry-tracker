@@ -1,64 +1,65 @@
-// import * as Notifications from "expo-notifications";
+import { isRunningInExpoGo } from "expo";
+import type { NotificationPermissionsStatus } from "expo-notifications";
+import { Platform } from "react-native";
 
-// export async function scheduleNotifications(
-//     id: number,
-//     name: string,
-//     endDate: string,
-//     type: "expiry" | "warranty"
-// ) {
-//     const end = new Date(endDate);
-//     const reminder = new Date(end);
-//     reminder.setDate(end.getDate() - 30);
+export const REMINDER_NOTIFICATION_CHANNEL_ID = "expiry-reminders";
 
-//     const title =
-//         type === "expiry"
-//             ? "Product Expiring Soon"
-//             : "Warranty Ending Soon";
+const hasNotificationPermission = (settings: NotificationPermissionsStatus) => {
+  const iosStatus = settings.ios?.status;
 
-//     // 30-day reminder
-//     if (reminder > new Date()) {
-//         await Notifications.scheduleNotificationAsync({
-//             content: {
-//                 title,
-//                 body: `${name} expires in 30 days`,
-//             },
-//             trigger: reminder,
-//         });
-//     }
+  return (
+    settings.granted ||
+    iosStatus === 2 ||
+    iosStatus === 3 ||
+    iosStatus === 4
+  );
+};
 
-//     // Final day notification
-//     if (end > new Date()) {
-//         await Notifications.scheduleNotificationAsync({
-//             content: {
-//                 title,
-//                 body:
-//                     type === "expiry"
-//                         ? `${name} has expired`
-//                         : `${name}'s warranty ends today`,
-//             },
-//             trigger: end,
-//         });
-//     }
-// }
-// export async function scheduleNotifications(
-//     id: number,
-//     name: string,
-//     endDate: string,
-//     type: "expiry" | "warranty"
-// ) {
-//     const title =
-//         type === "expiry"
-//             ? "Product Expiring Soon"
-//             : "Warranty Ending Soon";
+export async function setupNotificationPermissions() {
+  // Actual notification behavior should be tested in a development build.
+  // Expo Go on Android logs SDK 53+ remote notification warnings even though
+  // this app only needs local reminders.
+  if (__DEV__ && isRunningInExpoGo()) {
+    return false;
+  }
 
-//     // 🔔 TEST NOTIFICATION (fires in 10 seconds)
-//     await Notifications.scheduleNotificationAsync({
-//         content: {
-//             title,
-//             body: `${name} test notification`,
-//         },
-//         trigger: {
-//             seconds: 10,
-//         },
-//     });
-// }
+  const Notifications = await import("expo-notifications");
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync(
+      REMINDER_NOTIFICATION_CHANNEL_ID,
+      {
+        name: "Expiry reminders",
+        description: "Expiry and warranty reminder alerts",
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#2563eb",
+      },
+    );
+  }
+
+  const currentSettings = await Notifications.getPermissionsAsync();
+
+  if (hasNotificationPermission(currentSettings)) {
+    return true;
+  }
+
+  const requestedSettings = await Notifications.requestPermissionsAsync({
+    ios: {
+      allowAlert: true,
+      allowBadge: false,
+      allowSound: true,
+    },
+  });
+
+  return hasNotificationPermission(requestedSettings);
+}
