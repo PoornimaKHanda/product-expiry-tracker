@@ -1,3 +1,4 @@
+import { strings } from "@/i18n";
 import { isRunningInExpoGo } from "expo";
 import { Platform } from "react-native";
 
@@ -62,8 +63,8 @@ export async function setupNotificationPermissions(
     await Notifications.setNotificationChannelAsync(
       REMINDER_NOTIFICATION_CHANNEL_ID,
       {
-        name: "Expiry reminders",
-        description: "Expiry and warranty reminder alerts",
+        name: strings.notificationChannelName,
+        description: strings.notificationChannelDescription,
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: "#2563eb",
@@ -138,21 +139,19 @@ const getNotificationCopy = (
 ) => {
   if (type === "expiry") {
     return {
-      title: offsetDays === 0 ? "Product expires today" : "Product expiring soon",
-      body:
-        offsetDays === 0
-          ? `${name} expires today.`
-          : `${name} expires in ${offsetDays} days.`,
+      title: offsetDays === 0 ? strings.productExpiresToday : strings.productExpiringSoon,
+      body: offsetDays === 0
+        ? strings.productExpiresTodayBody(name)
+        : strings.productExpiringSoonBody(name, offsetDays),
     };
   }
 
   return {
     title:
-      offsetDays === 0 ? "Warranty ends today" : "Warranty ending soon",
-    body:
-      offsetDays === 0
-        ? `${name}'s warranty ends today.`
-        : `${name}'s warranty ends in ${offsetDays} days.`,
+      offsetDays === 0 ? strings.warrantyEndsToday : strings.warrantyEndingSoon,
+    body: offsetDays === 0
+      ? strings.warrantyEndsTodayBody(name)
+      : strings.warrantyEndingSoonBody(name, offsetDays),
   };
 };
 
@@ -247,8 +246,8 @@ export async function scheduleDevTestNotification() {
   const scheduledIdentifier = await Notifications.scheduleNotificationAsync({
     identifier,
     content: {
-      title: "Test reminder",
-      body: "Local notifications are working.",
+      title: strings.testReminderTitle,
+      body: strings.testReminderBody,
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,

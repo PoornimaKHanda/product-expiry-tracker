@@ -1,11 +1,12 @@
+import { PickerModal } from "@/components/pickers/PickerModal";
 import { strings } from "@/i18n";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useReminderOptions } from "../../hooks/usePickerOptions";
-import { CommonStyles } from "../../styles/common";
-import { PickerStyles } from "../../styles/pickers";
-import { Typography } from "../../theme/typography";
-import { PickerModal } from "./PickerModal";
+import { useReminderOptions } from "../hooks/usePickerOptions";
+import { CommonStyles } from "../styles/common";
+import { PickerStyles } from "../styles/pickers";
+import { Typography } from "../theme/typography";
+
 type Props = {
   value: string;
   onChange: (val: string) => void;

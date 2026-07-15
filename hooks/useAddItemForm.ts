@@ -1,3 +1,4 @@
+import { strings } from "@/i18n";
 import { fetchProductById, insertProduct, updateProduct } from "@/utils/db";
 import { scheduleDevTestNotification, scheduleItemNotifications } from "@/utils/notifications";
 import { router } from "expo-router";
@@ -32,7 +33,7 @@ export function useAddItemForm(id?: string) {
 
         const product = fetchProductById(Number(id));
         if (!product) {
-            Alert.alert("Item not found");
+            Alert.alert(strings.itemNotFound);
             router.back();
             return;
         }
@@ -48,7 +49,7 @@ export function useAddItemForm(id?: string) {
 
     const onSave = useCallback(async () => {
         if (!name || !startDate || !endDate) {
-            Alert.alert("Please fill required fields");
+            Alert.alert(strings.fillRequiredFields);
             return;
         }
 
@@ -70,7 +71,7 @@ export function useAddItemForm(id?: string) {
 
             router.back();
         } catch (error) {
-            Alert.alert("Error saving item");
+            Alert.alert(strings.errorSavingItem);
         }
     }, [category, endDate, id, isEdit, isExpiry, name, notes, reminderOption, startDate]);
 
@@ -79,13 +80,15 @@ export function useAddItemForm(id?: string) {
             const result = await scheduleDevTestNotification();
 
             Alert.alert(
-                result.scheduled ? "Test notification scheduled" : "Notifications unavailable",
                 result.scheduled
-                    ? `You should receive a local notification in about 10 seconds.\n\nPermission: ${result.permissionGranted ? "granted" : "not granted"}\nScheduled count: ${result.scheduledCount}`
-                    : `Permission: ${result.permissionGranted ? "granted" : "not granted"}\n\nCheck notification permissions for Expo Go, or use a development build if Expo Go cannot schedule notifications on this device.`,
+                    ? strings.testNotificationScheduled
+                    : strings.notificationsUnavailable,
+                result.scheduled
+                    ? `${strings.testNotificationPermissionInstructions}\n\n${strings.notificationPermissionStatus(result.permissionGranted)}\nScheduled count: ${result.scheduledCount}`
+                    : `${strings.notificationPermissionStatus(result.permissionGranted)}\n\n${strings.testNotificationPermissionInstructions}`,
             );
         } catch (error) {
-            Alert.alert("Error scheduling test notification");
+            Alert.alert(strings.errorSchedulingTestNotification);
         }
     }, []);
 

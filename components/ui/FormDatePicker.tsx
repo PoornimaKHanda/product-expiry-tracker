@@ -1,3 +1,4 @@
+import { strings } from "@/i18n";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
@@ -25,7 +26,7 @@ export function FormDatePicker({ label, date, onChange }: Props) {
         onPress={() => setShowPicker(true)}
         style={FormStyles.pickerTrigger}
       >
-        <Text>{date || "Select date"}</Text>
+        <Text>{date || strings.selectDate}</Text>
       </Pressable>
 
       {showPicker && (

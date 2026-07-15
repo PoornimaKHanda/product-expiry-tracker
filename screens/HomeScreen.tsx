@@ -5,6 +5,7 @@ import {
   SectionHeader,
 } from "@/components/ui";
 import { useProductsContext } from "@/contexts/ProductContext";
+import { strings } from "@/i18n";
 import { CommonStyles } from "@/styles/common";
 import { ScreenStyles } from "@/styles/screens";
 import { Typography } from "@/theme/typography";
@@ -45,15 +46,13 @@ export default function HomeScreen() {
   return (
     <SafeAreaView edges={["top", "bottom"]} style={ScreenStyles.root}>
       <ScrollView style={CommonStyles.screen}>
-        <Text style={Typography.title}>Product Expiry & Warranty Tracker</Text>
-        <Text style={Typography.subtitle}>
-          Track expiries and warranties without effort
-        </Text>
+        <Text style={Typography.title}>{strings.appTitle}</Text>
+        <Text style={Typography.subtitle}>{strings.appSubtitle}</Text>
 
-        <SectionHeader title="EXPIRING SOON" />
+        <SectionHeader title={strings.sectionExpiringSoon} />
         {expiringSoon.length === 0 ? (
           <Text style={ScreenStyles.emptyStateText}>
-            No products expiring soon 🎉
+            {strings.emptyExpiringSoon}
           </Text>
         ) : (
           expiringSoon.map((item) => (
@@ -61,16 +60,16 @@ export default function HomeScreen() {
               key={item.id}
               name={item.name}
               subtitle={item.category}
-              dateLabel={`Expires on ${formatDate(item.end_date)}`}
+              dateLabel={strings.expiresOn(formatDate(item.end_date))}
               onMenuPress={() => openActions(item)}
             />
           ))
         )}
 
-        <SectionHeader title="WARRANTY ENDING SOON" />
+        <SectionHeader title={strings.sectionWarrantyEndingSoon} />
         {warrantyEndingSoon.length === 0 ? (
           <Text style={ScreenStyles.emptyStateText}>
-            No warranties ending soon 🎉
+            {strings.emptyWarrantyEndingSoon}
           </Text>
         ) : (
           warrantyEndingSoon.map((item) => (
@@ -78,7 +77,7 @@ export default function HomeScreen() {
               key={item.id}
               name={item.name}
               subtitle={item.category}
-              dateLabel={`Warranty ends on ${formatDate(item.end_date)}`}
+              dateLabel={strings.warrantyEndsOn(formatDate(item.end_date))}
               onMenuPress={() => openActions(item)}
             />
           ))
@@ -90,7 +89,7 @@ export default function HomeScreen() {
       <View style={ScreenStyles.fabContainer}>
         <AppButton
           kind="floating"
-          label="＋"
+          label={strings.addItem}
           onPress={() => router.push("/add-item")}
         />
       </View>
@@ -109,10 +108,10 @@ export default function HomeScreen() {
         onDelete={() => {
           if (!selectedItem) return;
 
-          Alert.alert("Delete Item", "This cannot be undone.", [
-            { text: "Cancel" },
+          Alert.alert(strings.deleteItem, strings.deleteItemConfirm, [
+            { text: strings.cancelButton },
             {
-              text: "Delete",
+              text: strings.delete,
               style: "destructive",
               onPress: async () => {
                 await cancelItemNotifications(selectedItem.id);

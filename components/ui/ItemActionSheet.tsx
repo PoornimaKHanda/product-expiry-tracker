@@ -1,3 +1,4 @@
+import { strings } from "@/i18n";
 import { BlurView } from "expo-blur";
 import { Modal, Pressable, Text } from "react-native";
 import { ActionSheetStyles } from "../../styles/action-sheet";
@@ -16,15 +17,19 @@ export function ItemActionSheet({ visible, onClose, onEdit, onDelete }: Props) {
         <BlurView intensity={40} style={ActionSheetStyles.blurContainer}>
           <Pressable style={ActionSheetStyles.sheet}>
             <Pressable onPress={onEdit}>
-              <Text style={ActionSheetStyles.actionText}>✏️ Edit</Text>
+              <Text style={ActionSheetStyles.actionText}>
+                ✏️ {strings.editItem}
+              </Text>
             </Pressable>
 
             <Pressable onPress={onDelete}>
-              <Text style={ActionSheetStyles.deleteText}>🗑️ Delete</Text>
+              <Text style={ActionSheetStyles.deleteText}>
+                🗑️ {strings.delete}
+              </Text>
             </Pressable>
 
             <Pressable onPress={onClose}>
-              <Text style={ActionSheetStyles.cancelText}>Cancel</Text>
+              <Text style={ActionSheetStyles.cancelText}>{strings.cancel}</Text>
             </Pressable>
           </Pressable>
         </BlurView>

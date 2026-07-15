@@ -1,12 +1,13 @@
 import { CategoryPicker, ReminderPicker } from "@/components/pickers";
 import { AppButton, FormDatePicker, FormInput } from "@/components/ui";
-import { useAddItemForm } from "../hooks/useAddItemForm";
+import { strings } from "@/i18n";
 import { CommonStyles } from "@/styles/common";
 import { ScreenStyles } from "@/styles/screens";
 import { Typography } from "@/theme/typography";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAddItemForm } from "../hooks/useAddItemForm";
 
 export default function AddItemScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -34,20 +35,20 @@ export default function AddItemScreen() {
     <View style={ScreenStyles.root}>
       <ScrollView style={CommonStyles.screen}>
         <Text style={Typography.title}>
-          {isEdit ? "Edit Item" : "Add Item"}
+          {isEdit ? strings.editItem : strings.addItem}
         </Text>
         <Text style={ScreenStyles.modeBadge}>
-          {isEdit ? "Edit mode" : "Add mode"}
+          {isEdit ? strings.editMode : strings.addMode}
         </Text>
         <Text style={[Typography.subtitle, ScreenStyles.screenSubtitle]}>
           {isEdit
-            ? "Update product details"
-            : "Track product expiry or warranty"}
+            ? strings.updateProductDetails
+            : strings.trackProductExpiryOrWarranty}
         </Text>
 
         <FormInput
-          label="Product Name"
-          placeholder="Enter product name"
+          label={strings.productNameLabel}
+          placeholder={strings.productNamePlaceholder}
           value={name}
           onChangeText={setName}
         />
@@ -56,27 +57,27 @@ export default function AddItemScreen() {
         <AppButton
           kind="radio"
           options={[
-            { label: "Expiry", value: "expiry" },
-            { label: "Warranty", value: "warranty" },
+            { label: strings.expiry, value: "expiry" },
+            { label: strings.warranty, value: "warranty" },
           ]}
           selected={isExpiry ? "expiry" : "warranty"}
           onSelect={(val) => setIsExpiry(val === "expiry")}
         />
 
         <FormDatePicker
-          label={isExpiry ? "Opened / Purchase Date" : "Purchase Date"}
+          label={isExpiry ? strings.openedPurchaseDate : strings.purchaseDate}
           date={startDate}
           onChange={(d) => setStartDate(d.toISOString().split("T")[0])}
         />
         <FormDatePicker
-          label={isExpiry ? "Expiry Date" : "Warranty End Date"}
+          label={isExpiry ? strings.expiryDate : strings.warrantyEndDate}
           date={endDate}
           onChange={(d) => setEndDate(d.toISOString().split("T")[0])}
         />
         <ReminderPicker value={reminderOption} onChange={setReminderOption} />
         <FormInput
-          label="Notes (optional)"
-          placeholder="Any extra info"
+          label={strings.notesLabel}
+          placeholder={strings.notesPlaceholder}
           value={notes}
           onChangeText={setNotes}
         />
@@ -84,7 +85,7 @@ export default function AddItemScreen() {
         {__DEV__ ? (
           <AppButton
             kind="full"
-            label="Send Test Notification"
+            label={strings.sendTestNotification}
             onPress={onTestNotification}
           />
         ) : null}
@@ -93,7 +94,7 @@ export default function AddItemScreen() {
       <SafeAreaView edges={["bottom"]}>
         <AppButton
           kind="full"
-          label={isEdit ? "Update" : "Save"}
+          label={isEdit ? strings.update : strings.save}
           onPress={onSave}
         />
       </SafeAreaView>

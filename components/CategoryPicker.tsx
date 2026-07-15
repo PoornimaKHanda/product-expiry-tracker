@@ -1,45 +1,38 @@
 import { strings } from "@/i18n";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useReminderOptions } from "../../hooks/usePickerOptions";
-import { CommonStyles } from "../../styles/common";
-import { PickerStyles } from "../../styles/pickers";
-import { Typography } from "../../theme/typography";
-import { PickerModal } from "./PickerModal";
+import { useCategoryOptions } from "../hooks/usePickerOptions";
+import { CommonStyles } from "../styles/common";
+import { PickerStyles } from "../styles/pickers";
+import { Typography } from "../theme/typography";
+import { PickerModal } from "@/components/pickers/PickerModal";
+
 type Props = {
   value: string;
   onChange: (val: string) => void;
 };
 
-export function ReminderPicker({ value, onChange }: Props) {
+export function CategoryPicker({ value, onChange }: Props) {
   const [visible, setVisible] = useState(false);
   const [addingCustom, setAddingCustom] = useState(false);
   const [customText, setCustomText] = useState("");
-  const { options, addReminder } = useReminderOptions();
+  const { options: categories, addCategory } = useCategoryOptions();
 
-  const saveCustomReminder = async () => {
-    const parsedDays = Number(customText);
-    if (!Number.isFinite(parsedDays) || parsedDays <= 0) {
-      return;
-    }
+  const saveCustomCategory = async () => {
+    const trimmedText = customText.trim();
+    if (!trimmedText) return;
 
-    await addReminder(parsedDays);
-    onChange(`custom:${parsedDays}`);
+    await addCategory(trimmedText);
+    onChange(trimmedText);
     setCustomText("");
     setAddingCustom(false);
     setVisible(false);
   };
 
-  const selectedLabel =
-    options.find((option) => option.value === value)?.label ||
-    (value.startsWith("custom:")
-      ? strings.customReminderLabel(Number(value.split(":")[1]))
-      : strings.defaultReminders[0].label);
-
   return (
     <View style={CommonStyles.pickerContainer}>
       <Text style={[Typography.label, PickerStyles.labelSpacing]}>
-        {strings.reminder}
+        {strings.category}
       </Text>
 
       <TouchableOpacity
@@ -54,15 +47,15 @@ export function ReminderPicker({ value, onChange }: Props) {
               : PickerStyles.triggerTextInactive,
           ]}
         >
-          {selectedLabel}
+          {value || strings.selectCategory}
         </Text>
         <Text style={PickerStyles.triggerIcon}>▼</Text>
       </TouchableOpacity>
 
       <PickerModal
         visible={visible}
-        title={strings.selectReminderTitle}
-        items={options}
+        title={strings.selectCategoryTitle}
+        items={categories}
         selectedValue={value}
         onSelect={(selected) => {
           onChange(selected);
@@ -73,17 +66,17 @@ export function ReminderPicker({ value, onChange }: Props) {
           setAddingCustom(false);
           setCustomText("");
         }}
-        addButtonLabel={strings.addCustomReminder}
+        addButtonLabel={strings.addCustomCategory}
         isAddingCustom={addingCustom}
         onStartAddCustom={() => setAddingCustom(true)}
         customText={customText}
         onCustomTextChange={setCustomText}
-        onSaveCustom={saveCustomReminder}
+        onSaveCustom={saveCustomCategory}
         onCancelCustom={() => {
           setAddingCustom(false);
           setCustomText("");
         }}
-        customPlaceholder={strings.enterDaysBeforeExpiry}
+        customPlaceholder={strings.enterCategory}
       />
     </View>
   );

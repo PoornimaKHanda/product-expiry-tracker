@@ -1,3 +1,4 @@
+import { strings } from "@/i18n";
 import {
   FlatList,
   Modal,
@@ -113,7 +114,7 @@ export function PickerModal({
                         : PickerStyles.saveText,
                     ]}
                   >
-                    Save
+                    {strings.save}
                   </Text>
                 </TouchableOpacity>
 
@@ -122,7 +123,7 @@ export function PickerModal({
                   style={CommonStyles.cancelButton}
                 >
                   <Text style={[Typography.body, PickerStyles.cancelText]}>
-                    Cancel
+                    {strings.cancel}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -130,7 +131,7 @@ export function PickerModal({
           )}
 
           <TouchableOpacity onPress={onClose} style={ModalStyles.addButton}>
-            <Text style={ModalStyles.addButtonText}>Close</Text>
+            <Text style={ModalStyles.addButtonText}>{strings.close}</Text>
           </TouchableOpacity>
         </View>
       </View>

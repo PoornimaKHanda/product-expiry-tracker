@@ -1,3 +1,4 @@
+import { strings } from "@/i18n";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useCategoryOptions } from "../../hooks/usePickerOptions";
@@ -31,7 +32,7 @@ export function CategoryPicker({ value, onChange }: Props) {
   return (
     <View style={CommonStyles.pickerContainer}>
       <Text style={[Typography.label, PickerStyles.labelSpacing]}>
-        Category
+        {strings.category}
       </Text>
 
       <TouchableOpacity
@@ -46,14 +47,14 @@ export function CategoryPicker({ value, onChange }: Props) {
               : PickerStyles.triggerTextInactive,
           ]}
         >
-          {value || "Select category"}
+          {value || strings.selectCategory}
         </Text>
         <Text style={PickerStyles.triggerIcon}>▼</Text>
       </TouchableOpacity>
 
       <PickerModal
         visible={visible}
-        title="Select Category"
+        title={strings.selectCategoryTitle}
         items={categories}
         selectedValue={value}
         onSelect={(selected) => {
@@ -65,7 +66,7 @@ export function CategoryPicker({ value, onChange }: Props) {
           setAddingCustom(false);
           setCustomText("");
         }}
-        addButtonLabel="+ Add Custom Category"
+        addButtonLabel={strings.addCustomCategory}
         isAddingCustom={addingCustom}
         onStartAddCustom={() => setAddingCustom(true)}
         customText={customText}
@@ -75,7 +76,7 @@ export function CategoryPicker({ value, onChange }: Props) {
           setAddingCustom(false);
           setCustomText("");
         }}
-        customPlaceholder="Enter category"
+        customPlaceholder={strings.enterCategory}
       />
     </View>
   );
