@@ -11,9 +11,18 @@ export const initDB = () => {
       type TEXT NOT NULL,        -- 'expiry' | 'warranty'
       start_date TEXT NOT NULL,  -- YYYY-MM-DD
       end_date TEXT NOT NULL,    -- YYYY-MM-DD
+      reminder_option TEXT NOT NULL DEFAULT 'automatic',
       notes TEXT
     );
   `);
+
+    try {
+        db.execSync(
+            `ALTER TABLE products ADD COLUMN reminder_option TEXT NOT NULL DEFAULT 'automatic';`
+        );
+    } catch (e) {
+        // Existing databases already have this column after the first migration.
+    }
 };
 
 export const insertProduct = (
@@ -22,13 +31,16 @@ export const insertProduct = (
     type: 'expiry' | 'warranty',
     startDate: string,
     endDate: string,
+    reminderOption: string,
     notes: string
 ) => {
-    db.runSync(
-        `INSERT INTO products (name, category, type, start_date, end_date, notes)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-        [name, category, type, startDate, endDate, notes]
+    const result = db.runSync(
+        `INSERT INTO products (name, category, type, start_date, end_date, reminder_option, notes)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [name, category, type, startDate, endDate, reminderOption, notes]
     );
+
+    return result.lastInsertRowId;
 };
 
 export const fetchAllProducts = (): Array<{
@@ -38,6 +50,7 @@ export const fetchAllProducts = (): Array<{
     type: 'expiry' | 'warranty';
     start_date: string;
     end_date: string;
+    reminder_option: string;
     notes: string;
 }> => {
     return db.getAllSync(
@@ -49,6 +62,7 @@ export const fetchAllProducts = (): Array<{
         type: 'expiry' | 'warranty';
         start_date: string;
         end_date: string;
+        reminder_option: string;
         notes: string;
     }>;
 };
@@ -60,6 +74,7 @@ export const fetchProductById = (id: number): {
     type: 'expiry' | 'warranty';
     start_date: string;
     end_date: string;
+    reminder_option: string;
     notes: string;
 } | null => {
     const result = db.getFirstSync(
@@ -72,6 +87,7 @@ export const fetchProductById = (id: number): {
         type: 'expiry' | 'warranty';
         start_date: string;
         end_date: string;
+        reminder_option: string;
         notes: string;
     } | null;
     return result || null;
@@ -84,11 +100,12 @@ export const updateProduct = (
     type: 'expiry' | 'warranty',
     startDate: string,
     endDate: string,
+    reminderOption: string,
     notes: string
 ) => {
     db.runSync(
-        `UPDATE products SET name = ?, category = ?, type = ?, start_date = ?, end_date = ?, notes = ? WHERE id = ?`,
-        [name, category, type, startDate, endDate, notes, id]
+        `UPDATE products SET name = ?, category = ?, type = ?, start_date = ?, end_date = ?, reminder_option = ?, notes = ? WHERE id = ?`,
+        [name, category, type, startDate, endDate, reminderOption, notes, id]
     );
 };
 

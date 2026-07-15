@@ -1,6 +1,6 @@
 import { Text, TextInput, View } from "react-native";
-import { Spacing } from "../theme/spacing";
-import { Typography } from "../theme/typography";
+import { FormStyles } from "../../styles/forms";
+import { Typography } from "../../theme/typography";
 
 type Props = {
   label: string;
@@ -11,19 +11,13 @@ type Props = {
 
 export function FormInput({ label, placeholder, value, onChangeText }: Props) {
   return (
-    <View style={{ marginBottom: Spacing.md }}>
+    <View style={FormStyles.fieldGroup}>
       <Text style={Typography.label}>{label}</Text>
       <TextInput
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        style={{
-          borderWidth: 1,
-          borderColor: "#ccc",
-          borderRadius: 8,
-          padding: Spacing.sm,
-          marginTop: 4,
-        }}
+        style={FormStyles.textInput}
       />
     </View>
   );
