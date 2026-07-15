@@ -16,12 +16,7 @@ export default function RootLayout() {
     <ProductProvider>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="add-item"
-          options={({ route }) => ({
-            title: route?.params?.id ? "Edit item" : "Add item",
-          })}
-        />
+        <Stack.Screen name="add-item" />
       </Stack>
     </ProductProvider>
   );
