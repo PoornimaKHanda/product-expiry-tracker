@@ -42,22 +42,24 @@ export function ReminderPicker({ value, onChange }: Props) {
         {strings.reminder}
       </Text>
 
-      <TouchableOpacity
-        onPress={() => setVisible(true)}
-        style={CommonStyles.pickerTrigger}
-      >
-        <Text
-          style={[
-            Typography.body,
-            value
-              ? PickerStyles.triggerTextActive
-              : PickerStyles.triggerTextInactive,
-          ]}
+      <View style={CommonStyles.pickerWrapper}>
+        <TouchableOpacity
+          onPress={() => setVisible(true)}
+          style={CommonStyles.pickerTrigger}
         >
-          {selectedLabel}
-        </Text>
-        <Text style={PickerStyles.triggerIcon}>▼</Text>
-      </TouchableOpacity>
+          <Text
+            style={[
+              Typography.body,
+              value
+                ? PickerStyles.triggerTextActive
+                : PickerStyles.triggerTextInactive,
+            ]}
+          >
+            {selectedLabel}
+          </Text>
+          <Text style={PickerStyles.triggerIcon}>▼</Text>
+        </TouchableOpacity>
+      </View>
 
       <PickerModal
         visible={visible}

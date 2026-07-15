@@ -35,22 +35,24 @@ export function CategoryPicker({ value, onChange }: Props) {
         {strings.category}
       </Text>
 
-      <TouchableOpacity
-        onPress={() => setVisible(true)}
-        style={CommonStyles.pickerTrigger}
-      >
-        <Text
-          style={[
-            Typography.body,
-            value
-              ? PickerStyles.triggerTextActive
-              : PickerStyles.triggerTextInactive,
-          ]}
+      <View style={CommonStyles.pickerWrapper}>
+        <TouchableOpacity
+          onPress={() => setVisible(true)}
+          style={CommonStyles.pickerTrigger}
         >
-          {value || strings.selectCategory}
-        </Text>
-        <Text style={PickerStyles.triggerIcon}>▼</Text>
-      </TouchableOpacity>
+          <Text
+            style={[
+              Typography.body,
+              value
+                ? PickerStyles.triggerTextActive
+                : PickerStyles.triggerTextInactive,
+            ]}
+          >
+            {value || strings.selectCategory}
+          </Text>
+          <Text style={PickerStyles.triggerIcon}>▼</Text>
+        </TouchableOpacity>
+      </View>
 
       <PickerModal
         visible={visible}

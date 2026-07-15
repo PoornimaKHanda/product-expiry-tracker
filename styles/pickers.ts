@@ -13,11 +13,11 @@ export const PickerStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.border,
         padding: Spacing.sm,
-        borderRadius: 8,
+        borderRadius: 14,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        backgroundColor: Colors.background,
+        backgroundColor: Colors.surfaceSoft,
     },
     triggerTextInactive: {
         color: Colors.textSecondary,

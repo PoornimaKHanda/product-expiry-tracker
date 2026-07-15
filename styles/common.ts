@@ -11,9 +11,15 @@ export const CommonStyles = StyleSheet.create({
 
     card: {
         backgroundColor: Colors.surface,
-        borderRadius: 12,
+        borderRadius: 20,
         padding: Spacing.md,
-        marginBottom: Spacing.sm,
+        marginBottom: Spacing.md,
+        borderWidth: 1,
+        borderColor: Colors.border,
+        shadowColor: Colors.textPrimary,
+        shadowOpacity: 0.05,
+        shadowRadius: 16,
+        shadowOffset: { width: 0, height: 8 },
     },
 
     rowBetween: {
@@ -27,27 +33,34 @@ export const CommonStyles = StyleSheet.create({
         alignItems: 'center',
     },
 
-    /* Category picker styles */
     pickerContainer: {
         marginBottom: Spacing.md,
     },
 
+    pickerWrapper: {
+        borderRadius: 16,
+        backgroundColor: Colors.surfaceSoft,
+        padding: 3,
+    },
+
     pickerTrigger: {
         borderWidth: 1,
-        borderColor: Colors.muted,
+        borderColor: Colors.border,
         padding: Spacing.sm,
-        borderRadius: 8,
+        borderRadius: 12,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        backgroundColor: Colors.surface,
     },
 
     inputHighlighted: {
-        borderWidth: 2,
-        borderColor: Colors.muted,
+        borderWidth: 1,
+        borderColor: Colors.border,
         padding: Spacing.sm,
-        borderRadius: 8,
+        borderRadius: 14,
         marginBottom: Spacing.sm,
+        backgroundColor: Colors.surface,
     },
 
     actionRow: {
@@ -58,7 +71,7 @@ export const CommonStyles = StyleSheet.create({
     saveButton: {
         flex: 1,
         padding: Spacing.sm,
-        borderRadius: 8,
+        borderRadius: 14,
         backgroundColor: Colors.primary,
         marginRight: Spacing.sm,
         alignItems: 'center',
@@ -67,9 +80,10 @@ export const CommonStyles = StyleSheet.create({
     cancelButton: {
         flex: 1,
         padding: Spacing.sm,
-        borderRadius: 8,
+        borderRadius: 14,
         borderWidth: 1,
-        borderColor: Colors.border,
+        borderColor: Colors.textSecondary,
+        backgroundColor: Colors.surface,
         alignItems: 'center',
     },
 

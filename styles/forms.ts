@@ -9,19 +9,19 @@ export const FormStyles = StyleSheet.create({
     textInput: {
         borderWidth: 1,
         borderColor: Colors.border,
-        borderRadius: 8,
+        borderRadius: 12,
         padding: Spacing.sm,
         marginTop: 4,
-        backgroundColor: Colors.background,
+        backgroundColor: Colors.surface,
         color: Colors.textPrimary,
     },
     pickerTrigger: {
         borderWidth: 1,
         borderColor: Colors.border,
-        borderRadius: 8,
+        borderRadius: 12,
         padding: Spacing.sm,
         marginTop: 4,
-        backgroundColor: Colors.background,
+        backgroundColor: Colors.surface,
     },
     pickerTriggerText: {
         color: Colors.textPrimary,

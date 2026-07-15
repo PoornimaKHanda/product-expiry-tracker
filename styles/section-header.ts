@@ -5,5 +5,6 @@ export const SectionHeaderStyles = StyleSheet.create({
     root: {
         marginTop: Spacing.lg,
         marginBottom: Spacing.sm,
+        paddingVertical: Spacing.xs,
     },
 });

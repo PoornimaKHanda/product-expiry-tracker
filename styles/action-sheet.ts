@@ -10,24 +10,25 @@ export const ActionSheetStyles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     sheet: {
-        backgroundColor: Colors.background,
-        padding: 20,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        backgroundColor: Colors.surface,
+        padding: 24,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        borderWidth: 1,
+        borderColor: Colors.border,
     },
     actionText: {
         fontSize: 18,
-        marginBottom: 16,
+        marginBottom: 18,
         color: Colors.textPrimary,
     },
     deleteText: {
         fontSize: 18,
-        marginBottom: 16,
+        marginBottom: 18,
         color: Colors.danger,
     },
     cancelText: {
         fontSize: 16,
-        opacity: 0.6,
         color: Colors.textSecondary,
     },
 });
