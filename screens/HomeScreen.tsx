@@ -89,7 +89,7 @@ export default function HomeScreen() {
       <View style={ScreenStyles.fabContainer}>
         <AppButton
           kind="floating"
-          label={strings.addItem}
+          label={strings.addItemIcon}
           onPress={() => router.push("/add-item")}
         />
       </View>

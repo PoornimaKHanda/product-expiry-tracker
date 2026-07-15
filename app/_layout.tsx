@@ -1,8 +1,8 @@
+import { ProductProvider } from "@/contexts/ProductContext";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
 import { initDB } from "../utils/db";
 import { setupNotificationPermissions } from "../utils/notifications";
-import { ProductProvider } from "@/contexts/ProductContext";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -16,6 +16,12 @@ export default function RootLayout() {
     <ProductProvider>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="add-item"
+          options={({ route }) => ({
+            title: route?.params?.id ? "Edit item" : "Add item",
+          })}
+        />
       </Stack>
     </ProductProvider>
   );

@@ -12,6 +12,7 @@ export const en = {
     emptyExpiringSoon: "No products expiring soon 🎉",
     emptyWarrantyEndingSoon: "No warranties ending soon 🎉",
 
+    addItemIcon: "+",
     addItem: "Add Item",
     editItem: "Edit Item",
     editMode: "Edit mode",

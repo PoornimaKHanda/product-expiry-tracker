@@ -4,13 +4,17 @@ import { strings } from "@/i18n";
 import { CommonStyles } from "@/styles/common";
 import { ScreenStyles } from "@/styles/screens";
 import { Typography } from "@/theme/typography";
+import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
+import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAddItemForm } from "../hooks/useAddItemForm";
 
 export default function AddItemScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
+  const navigation = useNavigation();
+
   const {
     name,
     setName,
@@ -31,12 +35,15 @@ export default function AddItemScreen() {
     onTestNotification,
   } = useAddItemForm(id);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: isEdit ? "Edit item" : "Add item",
+    });
+  }, [navigation, isEdit]);
+
   return (
     <View style={ScreenStyles.root}>
       <ScrollView style={CommonStyles.screen}>
-        <Text style={Typography.title}>
-          {isEdit ? strings.editItem : strings.addItem}
-        </Text>
         <Text style={ScreenStyles.modeBadge}>
           {isEdit ? strings.editMode : strings.addMode}
         </Text>
