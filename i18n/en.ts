@@ -9,9 +9,13 @@ export const en = {
 
     sectionExpiringSoon: "EXPIRING SOON",
     sectionWarrantyEndingSoon: "WARRANTY ENDING SOON",
+    sectionAllItems: "ALL ITEMS",
     emptyExpiringSoon: "No products expiring soon 🎉",
     emptyWarrantyEndingSoon: "No warranties ending soon 🎉",
+    emptyAllItems: "No products saved yet 🎉",
 
+    homeTab: "Home",
+    allItemsTab: "All Items",
     addProduct: "Add Product",
     addItem: "Add Item",
     editItem: "Edit Item",

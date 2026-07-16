@@ -21,10 +21,31 @@ export const ItemCardStyles = StyleSheet.create({
         flex: 1,
         marginRight: 12,
     },
+    titleRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
     title: {
         fontSize: 18,
         fontWeight: "700",
         color: Colors.textPrimary,
+    },
+    badge: {
+        borderRadius: 12,
+        paddingVertical: 4,
+        paddingHorizontal: 10,
+    },
+    badgeExpiry: {
+        backgroundColor: "rgba(108, 99, 255, 0.12)",
+    },
+    badgeWarranty: {
+        backgroundColor: "rgba(16, 185, 129, 0.12)",
+    },
+    badgeText: {
+        fontSize: 12,
+        fontWeight: "700",
+        color: Colors.primary,
     },
     subtitle: {
         marginTop: 6,

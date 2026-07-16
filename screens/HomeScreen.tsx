@@ -1,5 +1,6 @@
 import {
   AppButton,
+  HomeTabs,
   ItemActionSheet,
   ItemCard,
   SectionHeader,
@@ -29,9 +30,10 @@ type Product = {
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { expiringSoon, warrantyEndingSoon, refreshProducts } =
+  const { expiringSoon, warrantyEndingSoon, allProducts, refreshProducts } =
     useProductsContext();
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
+  const [activeTab, setActiveTab] = useState<"home" | "all">("home");
   const [showSheet, setShowSheet] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -61,50 +63,87 @@ export default function HomeScreen() {
         <Text style={Typography.title}>{strings.appTitle}</Text>
         <Text style={Typography.subtitle}>{strings.appSubtitle}</Text>
 
-        <SectionHeader title={strings.sectionExpiringSoon} />
-        {expiringSoon.length === 0 ? (
-          <Text style={ScreenStyles.emptyStateText}>
-            {strings.emptyExpiringSoon}
-          </Text>
-        ) : (
-          expiringSoon.map((item) => (
-            <ItemCard
-              key={item.id}
-              name={item.name}
-              subtitle={item.category}
-              dateLabel={strings.expiresOn(formatDate(item.end_date))}
-              onMenuPress={() => openActions(item)}
-            />
-          ))
-        )}
+        <HomeTabs activeTab={activeTab} onChange={setActiveTab} />
 
-        <SectionHeader title={strings.sectionWarrantyEndingSoon} />
-        {warrantyEndingSoon.length === 0 ? (
-          <Text style={ScreenStyles.emptyStateText}>
-            {strings.emptyWarrantyEndingSoon}
-          </Text>
-        ) : (
-          warrantyEndingSoon.map((item) => (
-            <ItemCard
-              key={item.id}
-              name={item.name}
-              subtitle={item.category}
-              dateLabel={strings.warrantyEndsOn(formatDate(item.end_date))}
-              onMenuPress={() => openActions(item)}
-            />
-          ))
-        )}
+        {activeTab === "home" ? (
+          <>
+            <SectionHeader title={strings.sectionExpiringSoon} />
+            {expiringSoon.length === 0 ? (
+              <Text style={ScreenStyles.emptyStateText}>
+                {strings.emptyExpiringSoon}
+              </Text>
+            ) : (
+              expiringSoon.map((item) => (
+                <ItemCard
+                  key={item.id}
+                  name={item.name}
+                  subtitle={item.category}
+                  dateLabel={strings.expiresOn(formatDate(item.end_date))}
+                  itemType={item.type}
+                  onMenuPress={() => openActions(item)}
+                />
+              ))
+            )}
 
-        <View style={ScreenStyles.bottomSpacer} />
+            <SectionHeader title={strings.sectionWarrantyEndingSoon} />
+            {warrantyEndingSoon.length === 0 ? (
+              <Text style={ScreenStyles.emptyStateText}>
+                {strings.emptyWarrantyEndingSoon}
+              </Text>
+            ) : (
+              warrantyEndingSoon.map((item) => (
+                <ItemCard
+                  key={item.id}
+                  name={item.name}
+                  subtitle={item.category}
+                  dateLabel={strings.warrantyEndsOn(formatDate(item.end_date))}
+                  itemType={item.type}
+                  onMenuPress={() => openActions(item)}
+                />
+              ))
+            )}
+
+            <View style={ScreenStyles.bottomSpacer} />
+          </>
+        ) : (
+          <>
+            <SectionHeader title={strings.sectionAllItems} />
+            {allProducts.length === 0 ? (
+              <Text style={ScreenStyles.emptyStateText}>
+                {strings.emptyAllItems}
+              </Text>
+            ) : (
+              allProducts.map((item) => (
+                <ItemCard
+                  key={item.id}
+                  name={item.name}
+                  subtitle={item.category}
+                  dateLabel={
+                    item.type === "expiry"
+                      ? strings.expiresOn(formatDate(item.end_date))
+                      : strings.warrantyEndsOn(formatDate(item.end_date))
+                  }
+                  itemType={item.type}
+                  showTypeBadge
+                  onMenuPress={() => openActions(item)}
+                />
+              ))
+            )}
+
+            <View style={ScreenStyles.bottomSpacer} />
+          </>
+        )}
       </ScrollView>
 
-      <View style={ScreenStyles.bottomActionBar}>
-        <AppButton
-          kind="full"
-          label={strings.addProduct}
-          onPress={() => router.push("/add-item")}
-        />
-      </View>
+      {activeTab === "home" ? (
+        <View style={ScreenStyles.bottomActionBar}>
+          <AppButton
+            kind="full"
+            label={strings.addProduct}
+            onPress={() => router.push("/add-item")}
+          />
+        </View>
+      ) : null}
 
       <ItemActionSheet
         visible={showSheet}

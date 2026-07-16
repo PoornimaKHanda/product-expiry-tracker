@@ -2,6 +2,7 @@ export * from "./AppButton";
 export * from "./ExternalLink";
 export * from "./FormDatePicker";
 export * from "./FormInput";
+export * from "./HomeTabs";
 export * from "./ItemActionSheet";
 export * from "./ItemCard";
 export * from "./SectionHeader";

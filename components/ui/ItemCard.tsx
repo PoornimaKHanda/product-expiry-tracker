@@ -1,3 +1,4 @@
+import { strings } from "@/i18n";
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
 import { ItemCardStyles } from "../../styles/item-card";
@@ -7,14 +8,39 @@ type Props = {
   name: string;
   subtitle: string;
   dateLabel: string;
+  itemType?: "expiry" | "warranty";
+  showTypeBadge?: boolean;
   onMenuPress?: () => void;
 };
 
-export function ItemCard({ name, subtitle, dateLabel, onMenuPress }: Props) {
+export function ItemCard({
+  name,
+  subtitle,
+  dateLabel,
+  itemType,
+  showTypeBadge = false,
+  onMenuPress,
+}: Props) {
   return (
     <View style={ItemCardStyles.root}>
       <View style={ItemCardStyles.content}>
-        <Text style={ItemCardStyles.title}>{name}</Text>
+        <View style={ItemCardStyles.titleRow}>
+          <Text style={ItemCardStyles.title}>{name}</Text>
+          {showTypeBadge && itemType ? (
+            <View
+              style={[
+                ItemCardStyles.badge,
+                itemType === "expiry"
+                  ? ItemCardStyles.badgeExpiry
+                  : ItemCardStyles.badgeWarranty,
+              ]}
+            >
+              <Text style={ItemCardStyles.badgeText}>
+                {itemType === "expiry" ? strings.expiry : strings.warranty}
+              </Text>
+            </View>
+          ) : null}
+        </View>
         <Text style={ItemCardStyles.subtitle}>{subtitle}</Text>
         <Text style={ItemCardStyles.date}>{dateLabel}</Text>
       </View>

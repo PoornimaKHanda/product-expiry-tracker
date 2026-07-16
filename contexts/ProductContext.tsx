@@ -20,6 +20,7 @@ type Product = {
 type ProductContextValue = {
   expiringSoon: Product[];
   warrantyEndingSoon: Product[];
+  allProducts: Product[];
   refreshProducts: () => Promise<void>;
 };
 
@@ -30,6 +31,7 @@ const ProductContext = createContext<ProductContextValue | undefined>(
 export function ProductProvider({ children }: { children: ReactNode }) {
   const [expiringSoon, setExpiringSoon] = useState<Product[]>([]);
   const [warrantyEndingSoon, setWarrantyEndingSoon] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const refreshProducts = useCallback(async () => {
     const products = await fetchAllProducts();
@@ -56,6 +58,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
     setExpiringSoon(expiring);
     setWarrantyEndingSoon(warranty);
+    setAllProducts(products);
   }, []);
 
   useEffect(() => {
@@ -64,7 +67,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   return (
     <ProductContext.Provider
-      value={{ expiringSoon, warrantyEndingSoon, refreshProducts }}
+      value={{ expiringSoon, warrantyEndingSoon, allProducts, refreshProducts }}
     >
       {children}
     </ProductContext.Provider>

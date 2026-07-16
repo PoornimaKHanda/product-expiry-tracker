@@ -42,6 +42,30 @@ export const CommonStyles = StyleSheet.create({
         backgroundColor: Colors.surfaceSoft,
         padding: 3,
     },
+    tabBar: {
+        flexDirection: "row",
+        marginTop: Spacing.md,
+        marginBottom: Spacing.md,
+        backgroundColor: Colors.surfaceSoft,
+        borderRadius: 18,
+        overflow: "hidden",
+    },
+    tabButton: {
+        flex: 1,
+        paddingVertical: Spacing.sm,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    tabButtonActive: {
+        backgroundColor: Colors.primary,
+    },
+    tabButtonText: {
+        color: Colors.textPrimary,
+        fontWeight: "700",
+    },
+    tabButtonTextActive: {
+        color: Colors.background,
+    },
 
     pickerTrigger: {
         borderWidth: 1,
