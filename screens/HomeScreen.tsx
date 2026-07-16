@@ -7,14 +7,16 @@ import {
 import { useProductsContext } from "@/contexts/ProductContext";
 import { strings } from "@/i18n";
 import { CommonStyles } from "@/styles/common";
+import { ModalStyles } from "@/styles/modals";
 import { ScreenStyles } from "@/styles/screens";
 import { Typography } from "@/theme/typography";
 import { formatDate } from "@/utils/date";
 import { deleteProductById } from "@/utils/db";
 import { cancelItemNotifications } from "@/utils/notifications";
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type Product = {
@@ -31,10 +33,20 @@ export default function HomeScreen() {
     useProductsContext();
   const [selectedItem, setSelectedItem] = useState<Product | null>(null);
   const [showSheet, setShowSheet] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const openActions = (item: Product) => {
     setSelectedItem(item);
     setShowSheet(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedItem) return;
+    setShowDeleteConfirm(false);
+    await cancelItemNotifications(selectedItem.id);
+    await deleteProductById(selectedItem.id);
+    setSelectedItem(null);
+    refreshProducts();
   };
 
   useFocusEffect(
@@ -86,10 +98,10 @@ export default function HomeScreen() {
         <View style={ScreenStyles.bottomSpacer} />
       </ScrollView>
 
-      <View style={ScreenStyles.fabContainer}>
+      <View style={ScreenStyles.bottomActionBar}>
         <AppButton
-          kind="floating"
-          label={strings.addItemIcon}
+          kind="full"
+          label={strings.addProduct}
           onPress={() => router.push("/add-item")}
         />
       </View>
@@ -107,23 +119,58 @@ export default function HomeScreen() {
         }}
         onDelete={() => {
           if (!selectedItem) return;
-
-          Alert.alert(strings.deleteItem, strings.deleteItemConfirm, [
-            { text: strings.cancelButton },
-            {
-              text: strings.delete,
-              style: "destructive",
-              onPress: async () => {
-                await cancelItemNotifications(selectedItem.id);
-                await deleteProductById(selectedItem.id);
-                refreshProducts();
-              },
-            },
-          ]);
-
           setShowSheet(false);
+          setShowDeleteConfirm(true);
         }}
       />
+
+      <Modal visible={showDeleteConfirm} transparent animationType="fade">
+        <View style={ModalStyles.overlay}>
+          <View style={ModalStyles.card}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 18,
+              }}
+            >
+              <Ionicons name="warning-outline" size={22} color="#E53935" />
+              <Text
+                style={[ModalStyles.title, { marginLeft: 10, marginBottom: 0 }]}
+              >
+                {strings.deleteItem}
+              </Text>
+            </View>
+            <Text style={[Typography.body, { marginBottom: 24 }]}>
+              {strings.deleteItemConfirm}
+            </Text>
+            <View style={ModalStyles.actionsRow}>
+              <TouchableOpacity
+                onPress={() => setShowDeleteConfirm(false)}
+                style={[
+                  ModalStyles.actionButton,
+                  ModalStyles.actionButtonSecondary,
+                ]}
+              >
+                <Text style={ModalStyles.actionButtonText}>
+                  {strings.cancelButton}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={confirmDelete}
+                style={ModalStyles.actionButton}
+              >
+                <Text
+                  style={[ModalStyles.actionButtonText, { color: "#E53935" }]}
+                >
+                  {strings.delete}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

@@ -10,8 +10,11 @@ export const ScreenStyles = StyleSheet.create({
     bottomSpacer: {
         height: 100,
     },
-    fabContainer: {
-        marginBottom: Spacing.lg,
+    bottomActionBar: {
+        width: "100%",
+        paddingHorizontal: Spacing.sm,
+        // paddingVertical: Spacing.sm,
+        backgroundColor: Colors.background,
     },
     emptyStateText: {
         color: Colors.textSecondary,

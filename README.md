@@ -12,26 +12,26 @@ No backend. No accounts. No ads. No tracking.
 
 People often forget:
 
-* When makeup or skincare expires after opening
-* When an expensive product’s warranty is about to end
-* Where the receipt or warranty registration is stored
+- When makeup or skincare expires after opening
+- When an expensive product’s warranty is about to end
+- Where the receipt or warranty registration is stored
 
 This app solves that by:
 
-* Tracking **time‑bound product lifecycles** locally
-* Sending **local notifications** before important dates
-* Storing **receipts / registrations** securely on device
-* Minimizing permissions and security risk
+- Tracking **time‑bound product lifecycles** locally
+- Sending **local notifications** before important dates
+- Storing **receipts / registrations** securely on device
+- Minimizing permissions and security risk
 
 ---
 
 ## 🧠 Core Principles
 
-* **Offline‑first** – All data stored on device
-* **Privacy‑first** – No internet access, no backend
-* **Minimal permissions** – Camera & notifications only when required
-* **Longevity** – Stable local storage, OS‑level scheduling
-* **Reusable design** – One model for expiry & warranty tracking
+- **Offline‑first** – All data stored on device
+- **Privacy‑first** – No internet access, no backend
+- **Minimal permissions** – Camera & notifications only when required
+- **Longevity** – Stable local storage, OS‑level scheduling
+- **Reusable design** – One model for expiry & warranty tracking
 
 ---
 
@@ -39,31 +39,31 @@ This app solves that by:
 
 ### ✅ Core Tracking (MVP)
 
-* Track **product expiries** (makeup, skincare, medicines, food items)
-* Track **product warranties** (electronics, tools, appliances)
-* Unified item model for both expiry & warranty
-* Categorization (Makeup, Skincare, Electronics, Tools, etc.)
+- Track **product expiries** (makeup, skincare, medicines, food items)
+- Track **product warranties** (electronics, tools, appliances)
+- Unified item model for both expiry & warranty
+- Categorization (Makeup, Skincare, Electronics, Tools, etc.)
 
 ### ⏰ Smart Reminders
 
-* Notifications:
+- Notifications:
+  - 30 days before expiry / warranty end
+  - 7 days before (configurable later)
+  - On the exact end date
 
-  * 30 days before expiry / warranty end
-  * 7 days before (configurable later)
-  * On the exact end date
-* Works fully offline using OS scheduler
+- Works fully offline using OS scheduler
 
 ### 🧾 Records & Attachments
 
-* Attach purchase receipts / warranty registrations
-* Store product photos (optional)
-* Optional notes per item
+- Attach purchase receipts / warranty registrations
+- Store product photos (optional)
+- Optional notes per item
 
 ### 🤖 Smart Assist (Incremental)
 
-* Capture product photo
-* On‑device OCR to detect product name / brand
-* Auto‑suggest category (best‑effort)
+- Capture product photo
+- On‑device OCR to detect product name / brand
+- Auto‑suggest category (best‑effort)
 
 ---
 
@@ -113,24 +113,24 @@ This architecture intentionally avoids servers to reduce complexity, cost, and s
 
 ## 🛠️ Tech Stack
 
-* **React Native** (Android + iOS)
-* **Expo (Managed Workflow)**
-* **TypeScript**
-* **Expo Router** (navigation)
-* **expo‑sqlite** (local persistence)
-* **expo‑notifications** (local reminders)
-* **expo‑camera** (photo capture)
-* **On‑device OCR** (planned)
+- **React Native** (Android + iOS)
+- **Expo (Managed Workflow)**
+- **TypeScript**
+- **Expo Router** (navigation)
+- **expo‑sqlite** (local persistence)
+- **expo‑notifications** (local reminders)
+- **expo‑camera** (photo capture)
+- **On‑device OCR** (planned)
 
 ---
 
 ## 🔐 Security & Privacy
 
-* No network permission
-* No backend APIs
-* No authentication
-* No third‑party trackers
-* Data stored only in app sandbox
+- No network permission
+- No backend APIs
+- No authentication
+- No third‑party trackers
+- Data stored only in app sandbox
 
 Attack surface is intentionally minimal.
 
@@ -142,31 +142,31 @@ This project is built **incrementally**, suitable for weekend / holiday developm
 
 ### Phase 1 – Foundation
 
-* Initialize Expo + TypeScript project
-* Setup shared theme & reusable styles
-* Build Home screen UI
+- Initialize Expo + TypeScript project
+- Setup shared theme & reusable styles
+- Build Home screen UI
 
 ### Phase 2 – Core Functionality
 
-* Define TrackableItem data model
-* Local storage using SQLite
-* Add / Edit / Delete items
+- Define TrackableItem data model
+- Local storage using SQLite
+- Add / Edit / Delete items
 
 ### Phase 3 – Notifications
 
-* Calculate reminder dates
-* Schedule local notifications
-* Handle permission prompts gracefully
+- Calculate reminder dates
+- Schedule local notifications
+- Handle permission prompts gracefully
 
 ### Phase 4 – Attachments
 
-* Camera permission on demand
-* Store receipt / registration images
+- Camera permission on demand
+- Store receipt / registration images
 
 ### Phase 5 – Smart Assist (Optional)
 
-* OCR for product name detection
-* Barcode scan (best‑effort metadata)
+- OCR for product name detection
+- Barcode scan (best‑effort metadata)
 
 ---
 
@@ -174,9 +174,9 @@ This project is built **incrementally**, suitable for weekend / holiday developm
 
 ### Prerequisites
 
-* Node.js (LTS)
-* VS Code
-* Expo Go app (Android / iOS)
+- Node.js (LTS)
+- VS Code
+- Expo Go app (Android / iOS)
 
 ### Run locally
 
@@ -193,8 +193,8 @@ Scan the QR code using **Expo Go**.
 
 ## 📦 Deployment (Planned)
 
-* Standalone Android APK (sideloaded or Play Store)
-* iOS build via TestFlight (optional)
+- Standalone Android APK (sideloaded or Play Store)
+- iOS build via TestFlight (optional)
 
 Once installed, the app behaves like a system utility and does **not expire**.
 
@@ -209,3 +209,15 @@ Once installed, the app behaves like a system utility and does **not expire**.
 ## 📄 License
 
 Personal / Educational Use
+
+## To do
+
+Warrenty expiry date should have options like 5yrs,10yrs,2yrs etc from purchase date and date picker as well.
+make ui more appealing. (since it's for old people, keep standard texts and texts cannot be too small)
+instead of hamburger i think edit and delete icon would be good. (debatable)
+1 more tab for all items in this products and expiry
+Warrenty ending soon should soemhow tell that it only shows next due 30days items.
+
+remainder and local notifiction working
+
+- Handle permission prompts gracefully

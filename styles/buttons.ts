@@ -32,18 +32,20 @@ export const ButtonStyles = StyleSheet.create({
         position: "absolute",
         bottom: Spacing.lg,
         right: Spacing.lg,
-        width: 60,
-        height: 60,
-        borderRadius: 30,
+        minWidth: 56,
+        height: 56,
+        paddingHorizontal: Spacing.lg,
+        borderRadius: 28,
         backgroundColor: Colors.primary,
         justifyContent: "center",
         alignItems: "center",
         elevation: 5,
     },
     floatingText: {
-        fontSize: 32,
+        fontSize: 16,
         color: Colors.background,
-        marginBottom: 2,
+        fontWeight: "700",
+        marginBottom: 0,
     },
     full: {
         backgroundColor: Colors.primary,
@@ -61,7 +63,7 @@ export const ButtonStyles = StyleSheet.create({
     },
     selectedRadioOption: {
         borderColor: Colors.primary,
-        
+
     },
     selectedRadioDot: {
         backgroundColor: Colors.primary,

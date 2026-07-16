@@ -1,6 +1,12 @@
 import { strings } from "@/i18n";
 import { BlurView } from "expo-blur";
-import { Modal, Pressable, Text } from "react-native";
+import {
+  Modal,
+  Pressable,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { ActionSheetStyles } from "../../styles/action-sheet";
 
 type Props = {
@@ -13,27 +19,45 @@ type Props = {
 export function ItemActionSheet({ visible, onClose, onEdit, onDelete }: Props) {
   return (
     <Modal transparent animationType="fade" visible={visible}>
-      <Pressable style={ActionSheetStyles.fullScreen} onPress={onClose}>
-        <BlurView intensity={40} style={ActionSheetStyles.blurContainer}>
-          <Pressable style={ActionSheetStyles.sheet}>
-            <Pressable onPress={onEdit}>
-              <Text style={ActionSheetStyles.actionText}>
-                ✏️ {strings.editItem}
-              </Text>
-            </Pressable>
+      <View style={ActionSheetStyles.fullScreen}>
+        <BlurView
+          intensity={80}
+          tint="light"
+          style={ActionSheetStyles.absoluteFill}
+        />
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={ActionSheetStyles.overlay} />
+        </TouchableWithoutFeedback>
 
-            <Pressable onPress={onDelete}>
-              <Text style={ActionSheetStyles.deleteText}>
-                🗑️ {strings.delete}
-              </Text>
-            </Pressable>
-
-            <Pressable onPress={onClose}>
-              <Text style={ActionSheetStyles.cancelText}>{strings.cancel}</Text>
-            </Pressable>
+        <View style={ActionSheetStyles.sheet}>
+          <Pressable style={ActionSheetStyles.actionButton} onPress={onEdit}>
+            <Text style={ActionSheetStyles.actionText}>
+              ✏️ {strings.editItem}
+            </Text>
           </Pressable>
-        </BlurView>
-      </Pressable>
+
+          <Pressable
+            style={[
+              ActionSheetStyles.actionButton,
+              ActionSheetStyles.deleteButton,
+            ]}
+            onPress={onDelete}
+          >
+            <Text
+              style={[
+                ActionSheetStyles.actionText,
+                ActionSheetStyles.deleteText,
+              ]}
+            >
+              🗑️ {strings.delete}
+            </Text>
+          </Pressable>
+
+          <Pressable style={ActionSheetStyles.cancelButton} onPress={onClose}>
+            <Text style={ActionSheetStyles.cancelText}>{strings.cancel}</Text>
+          </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 }

@@ -81,12 +81,27 @@ export function PickerModal({
                 }}
               />
 
-              <TouchableOpacity
-                onPress={onStartAddCustom}
-                style={ModalStyles.addButton}
-              >
-                <Text style={ModalStyles.addButtonText}>{addButtonLabel}</Text>
-              </TouchableOpacity>
+              <View style={ModalStyles.actionsRow}>
+                <TouchableOpacity
+                  onPress={onStartAddCustom}
+                  style={ModalStyles.actionButton}
+                >
+                  <Text style={ModalStyles.actionButtonText}>
+                    {addButtonLabel}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={onClose}
+                  style={[
+                    ModalStyles.actionButton,
+                    ModalStyles.actionButtonSecondary,
+                  ]}
+                >
+                  <Text style={ModalStyles.actionButtonText}>
+                    {strings.close}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </>
           ) : (
             <>
@@ -129,10 +144,6 @@ export function PickerModal({
               </View>
             </>
           )}
-
-          <TouchableOpacity onPress={onClose} style={ModalStyles.addButton}>
-            <Text style={ModalStyles.addButtonText}>{strings.close}</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </Modal>

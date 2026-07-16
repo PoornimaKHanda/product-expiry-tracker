@@ -22,6 +22,31 @@ export const ModalStyles = StyleSheet.create({
         color: Colors.textPrimary,
         fontWeight: '700',
     },
+    actionsRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 12,
+        marginTop: 16,
+    },
+    actionButton: {
+        flex: 1,
+        borderRadius: 16,
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.surfaceSoft,
+        borderWidth: 1,
+        borderColor: Colors.border,
+    },
+    actionButtonText: {
+        color: Colors.textPrimary,
+        fontSize: 16,
+        fontWeight: '700',
+    },
+    actionButtonSecondary: {
+        backgroundColor: Colors.surface,
+    },
     addButton: {
         padding: 14,
     },

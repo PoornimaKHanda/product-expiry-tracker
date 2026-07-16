@@ -4,10 +4,13 @@ import { Colors } from "../theme/colors";
 export const ActionSheetStyles = StyleSheet.create({
     fullScreen: {
         flex: 1,
-    },
-    blurContainer: {
-        flex: 1,
         justifyContent: "flex-end",
+    },
+    absoluteFill: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
     },
     sheet: {
         backgroundColor: Colors.surface,
@@ -17,18 +20,34 @@ export const ActionSheetStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.border,
     },
+    actionButton: {
+        backgroundColor: Colors.surfaceSoft,
+        borderRadius: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 18,
+        marginBottom: 12,
+    },
+    deleteButton: {
+        backgroundColor: Colors.surface,
+    },
+    cancelButton: {
+        backgroundColor: Colors.surfaceSoft,
+        borderRadius: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 18,
+        alignItems: "center",
+    },
     actionText: {
         fontSize: 18,
-        marginBottom: 18,
         color: Colors.textPrimary,
+        fontWeight: "700"
     },
     deleteText: {
-        fontSize: 18,
-        marginBottom: 18,
         color: Colors.danger,
     },
     cancelText: {
-        fontSize: 16,
+        fontSize: 18,
         color: Colors.textSecondary,
+        fontWeight: "600",
     },
 });
