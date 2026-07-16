@@ -1,4 +1,5 @@
 export * from "./AppButton";
+export * from "./AttachmentSection";
 export * from "./ExternalLink";
 export * from "./FormDatePicker";
 export * from "./FormInput";

@@ -7,12 +7,14 @@ import {
 } from "@/components/ui";
 import { useProductsContext } from "@/contexts/ProductContext";
 import { strings } from "@/i18n";
+import { parseAttachments } from "@/utils/db";
 import { CommonStyles } from "@/styles/common";
 import { ModalStyles } from "@/styles/modals";
 import { ScreenStyles } from "@/styles/screens";
 import { Typography } from "@/theme/typography";
 import { formatDate } from "@/utils/date";
 import { deleteProductById } from "@/utils/db";
+import { deleteProductAttachments } from "@/utils/attachments";
 import { cancelItemNotifications } from "@/utils/notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -26,6 +28,7 @@ type Product = {
   category: string;
   end_date: string;
   type: "expiry" | "warranty";
+  attachments: string;
 };
 
 export default function HomeScreen() {
@@ -46,6 +49,7 @@ export default function HomeScreen() {
     if (!selectedItem) return;
     setShowDeleteConfirm(false);
     await cancelItemNotifications(selectedItem.id);
+    await deleteProductAttachments(selectedItem.id);
     await deleteProductById(selectedItem.id);
     setSelectedItem(null);
     refreshProducts();
@@ -80,6 +84,7 @@ export default function HomeScreen() {
                   subtitle={item.category}
                   dateLabel={strings.expiresOn(formatDate(item.end_date))}
                   itemType={item.type}
+                  hasAttachments={parseAttachments(item.attachments).length > 0}
                   onMenuPress={() => openActions(item)}
                 />
               ))
@@ -98,6 +103,7 @@ export default function HomeScreen() {
                   subtitle={item.category}
                   dateLabel={strings.warrantyEndsOn(formatDate(item.end_date))}
                   itemType={item.type}
+                  hasAttachments={parseAttachments(item.attachments).length > 0}
                   onMenuPress={() => openActions(item)}
                 />
               ))
@@ -125,6 +131,7 @@ export default function HomeScreen() {
                   }
                   itemType={item.type}
                   showTypeBadge
+                  hasAttachments={parseAttachments(item.attachments).length > 0}
                   onMenuPress={() => openActions(item)}
                 />
               ))

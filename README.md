@@ -210,12 +210,84 @@ Once installed, the app behaves like a system utility and does **not expire**.
 
 Personal / Educational Use
 
+## Phase 4 — Permission handling & Expo Dev Client
+
+This project will introduce additional native modules (for example, enhanced notifications, camera attachments, and potential native OCR). Expo Go does not support arbitrary native modules — use the Expo Development Client when you need modules beyond Expo Go.
+
+Quick developer steps:
+
+1. Install the dev client helper package:
+
+```bash
+npx expo install expo-dev-client
+```
+
+2a. (Local prebuild run) Prebuild and run on device/emulator:
+
+```bash
+npx expo prebuild
+npx expo run:android # or npx expo run:ios
+```
+
+2b. (Repeatable) Build a dev client via EAS and install on device:
+
+```bash
+# Requires EAS configured
+eas build --profile development --platform android
+eas build --profile development --platform ios
+```
+
+3. Permission handling guidance:
+
+- Request permissions on demand with a short rationale UI before the system prompt.
+- Use a centralized helper (`hooks/usePermission.ts`) for `checkPermission`, `requestPermission`, and `ensurePermission` to avoid importing native modules in environments (like Expo Go) until needed.
+- If permissions are denied permanently, direct users to app settings (the helper opens settings when appropriate).
+- Add manual device tests for iOS/Android when adding native modules.
+
+### Device Test Checklist
+
+Use this checklist when validating permission-sensitive features on real devices (recommended) or emulators running a dev client.
+
+- Dev client ready:
+
+```bash
+# Install dev client helper (if not already)
+npx expo install expo-dev-client
+
+# Quick local prebuild + run
+npx expo prebuild
+npx expo run:android   # or npx expo run:ios
+```
+
+- Notifications
+  - Verify `ensurePermission("notifications")` opens the system prompt with pre-rationale shown.
+  - Schedule a test notification and confirm it fires at the expected time.
+  - Deny permission and confirm the app shows a friendly explanation and an option to open settings.
+
+- Camera / Attachments
+  - On add-item flow, trigger camera permission request and confirm pre-rationale is shown.
+  - Capture photo and confirm the image is saved and accessible in the app.
+  - Deny and confirm graceful degradation (ability to skip attachments).
+
+- Media Library / Photos
+  - Request media-library permission when saving attachments; confirm pick/save workflows work.
+
+- Settings & Permanently Denied
+  - When permission is permanently denied, confirm `ensurePermission` directs users to app settings and the app explains required steps.
+
+- Platform checks
+  - iOS: confirm `Info.plist` permission strings are present for Camera/Photos/Location/Contacts as needed.
+  - Android: confirm `AndroidManifest.xml` (via prebuild) contains required `uses-permission` entries.
+
+- Build verification
+  - Using EAS, build a development client and install on a physical device to repeat the above flows.
+
 ## To do
 
 Warrenty expiry date should have options like 5yrs,10yrs,2yrs etc from purchase date and date picker as well.
-make ui more appealing. (since it's for old people, keep standard texts and texts cannot be too small)
+make ui more appealing. (since it's for old people, keep standard texts and texts cannot be too small) - done
 instead of hamburger i think edit and delete icon would be good. (debatable)
-1 more tab for all items in this products and expiry
+1 more tab for all items in this products and expiry -done
 Warrenty ending soon should soemhow tell that it only shows next due 30days items.
 
 remainder and local notifiction working

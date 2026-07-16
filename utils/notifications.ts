@@ -1,3 +1,4 @@
+import { ensurePermission } from "@/hooks/usePermission";
 import { strings } from "@/i18n";
 import { isRunningInExpoGo } from "expo";
 import { Platform } from "react-native";
@@ -177,13 +178,20 @@ export async function scheduleItemNotifications({
   reminderOption,
   allowExpoGo = true,
 }: ScheduleItemNotificationInput) {
+  const ensured = await ensurePermission("notifications", {
+    rationale: {
+      title: "Allow notifications",
+      message: strings.testNotificationPermissionInstructions,
+    },
+  });
+
+  if (!ensured) return [];
+
   const canSendNotifications = await setupNotificationPermissions({
     allowExpoGo,
   });
 
-  if (!canSendNotifications) {
-    return [];
-  }
+  if (!canSendNotifications) return [];
 
   await cancelItemNotifications(id);
 
@@ -228,12 +236,16 @@ export async function scheduleItemNotifications({
 
 export async function scheduleDevTestNotification() {
   const Notifications = await import("expo-notifications");
-  const canSendNotifications = await setupNotificationPermissions({
-    allowExpoGo: true,
+  const ensured = await ensurePermission("notifications", {
+    rationale: {
+      title: "Allow notifications",
+      message: strings.testNotificationPermissionInstructions,
+    },
   });
+
   const permissionSettings = await Notifications.getPermissionsAsync();
 
-  if (!canSendNotifications) {
+  if (!ensured) {
     return {
       scheduled: false,
       permissionGranted: permissionSettings.granted,
