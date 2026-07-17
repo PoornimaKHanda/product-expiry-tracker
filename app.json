@@ -12,14 +12,31 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow Product Expiry Tracker to take photos of receipts and product labels.",
+        "NSPhotoLibraryUsageDescription": "Allow Product Expiry Tracker to attach receipt photos from your library.",
+        "NSPhotoLibraryAddUsageDescription": "Allow Product Expiry Tracker to save receipt photos."
+      },
+      "bundleIdentifier": "com.anonymous.productexpirytracker"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_MEDIA_AUDIO"
+      ],
+      "package": "com.anonymous.productexpirytracker"
     },
     "web": {
       "bundler": "metro",
@@ -27,7 +44,26 @@
     },
     "plugins": [
       "expo-router",
-      "expo-notifications"
+      "expo-notifications",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Product Expiry Tracker to take photos of receipts and product labels."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Product Expiry Tracker to attach receipt photos from your library."
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Product Expiry Tracker to access receipt photos.",
+          "savePhotosPermission": "Allow Product Expiry Tracker to save receipt photos."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

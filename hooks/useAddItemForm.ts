@@ -1,20 +1,15 @@
 import { strings } from "@/i18n";
-import { fetchProductById, insertProduct, updateProduct } from "@/utils/db";
+import { fetchProductById, insertProduct, parseAttachments, updateProduct } from "@/utils/db";
+import {
+    deleteAttachmentFile,
+    finalizePendingAttachments,
+    saveAttachmentFromUri,
+    syncRemovedAttachments,
+} from "@/utils/attachments";
 import { scheduleDevTestNotification, scheduleItemNotifications } from "@/utils/notifications";
 import { router } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
-
-type FormState = {
-    name: string;
-    category: string;
-    isExpiry: boolean;
-    startDate?: string;
-    endDate?: string;
-    reminderOption: string;
-    notes: string;
-    isEdit: boolean;
-};
 
 export function useAddItemForm(id?: string) {
     const isEdit = Boolean(id);
@@ -25,6 +20,9 @@ export function useAddItemForm(id?: string) {
     const [endDate, setEndDate] = useState<string | undefined>(undefined);
     const [reminderOption, setReminderOption] = useState("automatic");
     const [notes, setNotes] = useState("");
+    const [attachments, setAttachments] = useState<string[]>([]);
+    const [isAttachmentBusy, setIsAttachmentBusy] = useState(false);
+    const originalAttachments = useRef<string[]>([]);
 
     useEffect(() => {
         if (!isEdit || !id) {
@@ -38,6 +36,8 @@ export function useAddItemForm(id?: string) {
             return;
         }
 
+        const savedAttachments = parseAttachments(product.attachments);
+
         setName(product.name);
         setCategory(product.category || "");
         setIsExpiry(product.type === "expiry");
@@ -45,7 +45,30 @@ export function useAddItemForm(id?: string) {
         setEndDate(product.end_date);
         setReminderOption(product.reminder_option || "automatic");
         setNotes(product.notes || "");
+        setAttachments(savedAttachments);
+        originalAttachments.current = savedAttachments;
     }, [id, isEdit]);
+
+    const addAttachment = useCallback(
+        async (sourceUri: string) => {
+            setIsAttachmentBusy(true);
+            try {
+                const productId = isEdit && id ? Number(id) : undefined;
+                const savedUri = await saveAttachmentFromUri(sourceUri, productId);
+                setAttachments((current) => [...current, savedUri]);
+            } catch {
+                Alert.alert(strings.errorSavingAttachment);
+            } finally {
+                setIsAttachmentBusy(false);
+            }
+        },
+        [id, isEdit],
+    );
+
+    const removeAttachment = useCallback((uri: string) => {
+        setAttachments((current) => current.filter((item) => item !== uri));
+        void deleteAttachmentFile(uri);
+    }, []);
 
     const onSave = useCallback(async () => {
         if (!name || !startDate || !endDate) {
@@ -55,10 +78,47 @@ export function useAddItemForm(id?: string) {
 
         try {
             const type = isExpiry ? "expiry" : "warranty";
-            const productId = isEdit && id ? Number(id) : insertProduct(name, category, type, startDate, endDate, reminderOption, notes);
+            let productId = isEdit && id ? Number(id) : 0;
+            let savedAttachments = attachments;
 
             if (isEdit && id) {
-                updateProduct(Number(id), name, category, type, startDate, endDate, reminderOption, notes);
+                await syncRemovedAttachments(originalAttachments.current, attachments);
+                updateProduct(
+                    Number(id),
+                    name,
+                    category,
+                    type,
+                    startDate,
+                    endDate,
+                    reminderOption,
+                    notes,
+                    attachments,
+                );
+            } else {
+                productId = Number(
+                    insertProduct(
+                        name,
+                        category,
+                        type,
+                        startDate,
+                        endDate,
+                        reminderOption,
+                        notes,
+                        [],
+                    ),
+                );
+                savedAttachments = await finalizePendingAttachments(attachments, productId);
+                updateProduct(
+                    productId,
+                    name,
+                    category,
+                    type,
+                    startDate,
+                    endDate,
+                    reminderOption,
+                    notes,
+                    savedAttachments,
+                );
             }
 
             await scheduleItemNotifications({
@@ -73,7 +133,18 @@ export function useAddItemForm(id?: string) {
         } catch (error) {
             Alert.alert(strings.errorSavingItem);
         }
-    }, [category, endDate, id, isEdit, isExpiry, name, notes, reminderOption, startDate]);
+    }, [
+        attachments,
+        category,
+        endDate,
+        id,
+        isEdit,
+        isExpiry,
+        name,
+        notes,
+        reminderOption,
+        startDate,
+    ]);
 
     const onTestNotification = useCallback(async () => {
         try {
@@ -107,8 +178,13 @@ export function useAddItemForm(id?: string) {
         setReminderOption,
         notes,
         setNotes,
+        attachments,
+        addAttachment,
+        removeAttachment,
+        isAttachmentBusy,
         isEdit,
         onSave,
         onTestNotification,
     };
 }
+

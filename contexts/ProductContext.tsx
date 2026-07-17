@@ -15,6 +15,7 @@ type Product = {
   category: string;
   end_date: string;
   type: "expiry" | "warranty";
+  attachments: string;
 };
 
 type ProductContextValue = {

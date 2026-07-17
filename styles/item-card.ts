@@ -59,4 +59,15 @@ export const ItemCardStyles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "600",
     },
+    attachmentRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 8,
+        gap: 6,
+    },
+    attachmentText: {
+        color: Colors.textMuted,
+        fontSize: 14,
+        fontWeight: "600",
+    },
 });

@@ -1,5 +1,5 @@
 import { CategoryPicker, ReminderPicker } from "@/components/pickers";
-import { AppButton, FormDatePicker, FormInput } from "@/components/ui";
+import { AppButton, AttachmentSection, FormDatePicker, FormInput } from "@/components/ui";
 import { strings } from "@/i18n";
 import { CommonStyles } from "@/styles/common";
 import { ScreenStyles } from "@/styles/screens";
@@ -30,6 +30,10 @@ export default function AddItemScreen() {
     setReminderOption,
     notes,
     setNotes,
+    attachments,
+    addAttachment,
+    removeAttachment,
+    isAttachmentBusy,
     isEdit,
     onSave,
     onTestNotification,
@@ -82,6 +86,12 @@ export default function AddItemScreen() {
           onChange={(d) => setEndDate(d.toISOString().split("T")[0])}
         />
         <ReminderPicker value={reminderOption} onChange={setReminderOption} />
+        <AttachmentSection
+          attachments={attachments}
+          onAdd={addAttachment}
+          onRemove={removeAttachment}
+          isBusy={isAttachmentBusy}
+        />
         <FormInput
           label={strings.notesLabel}
           placeholder={strings.notesPlaceholder}

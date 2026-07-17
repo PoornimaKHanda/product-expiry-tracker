@@ -88,6 +88,20 @@ export const en = {
     fillRequiredFields: "Please fill required fields",
     errorSavingItem: "Error saving item",
     errorSchedulingTestNotification: "Error scheduling test notification",
+    errorSavingAttachment: "Could not save the photo. Please try again.",
+
+    attachmentsLabel: "Receipt / Photo (optional)",
+    attachmentsHint: "Attach a receipt, warranty card, or product photo. You can skip this if you prefer.",
+    takePhoto: "Take Photo",
+    choosePhoto: "Choose Photo",
+    hasAttachments: "Has attachment",
+
+    cameraPermissionTitle: "Camera access needed",
+    cameraPermissionMessage:
+        "The camera is used only when you choose to take a photo of a receipt or product label.",
+    photosPermissionTitle: "Photo library access needed",
+    photosPermissionMessage:
+        "Photo access is used only when you choose to attach an existing receipt or product photo.",
 
     defaultCategories: [
         "Groceries",

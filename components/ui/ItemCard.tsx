@@ -10,6 +10,7 @@ type Props = {
   dateLabel: string;
   itemType?: "expiry" | "warranty";
   showTypeBadge?: boolean;
+  hasAttachments?: boolean;
   onMenuPress?: () => void;
 };
 
@@ -19,6 +20,7 @@ export function ItemCard({
   dateLabel,
   itemType,
   showTypeBadge = false,
+  hasAttachments = false,
   onMenuPress,
 }: Props) {
   return (
@@ -43,6 +45,14 @@ export function ItemCard({
         </View>
         <Text style={ItemCardStyles.subtitle}>{subtitle}</Text>
         <Text style={ItemCardStyles.date}>{dateLabel}</Text>
+        {hasAttachments ? (
+          <View style={ItemCardStyles.attachmentRow}>
+            <Ionicons name="attach" size={16} color={Colors.textMuted} />
+            <Text style={ItemCardStyles.attachmentText}>
+              {strings.hasAttachments}
+            </Text>
+          </View>
+        ) : null}
       </View>
 
       <Pressable onPress={onMenuPress} hitSlop={10}>
