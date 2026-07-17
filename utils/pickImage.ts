@@ -1,5 +1,6 @@
 import { ensurePermission } from "@/hooks/usePermission";
 import { strings } from "@/i18n";
+import { Alert } from "react-native";
 
 async function launchPicker(
   mode: "camera" | "library",
@@ -40,14 +41,20 @@ export async function pickImageFromCamera(): Promise<string | null> {
 }
 
 export async function pickImageFromLibrary(): Promise<string | null> {
-  const granted = await ensurePermission("mediaLibrary", {
-    rationale: {
-      title: strings.photosPermissionTitle,
-      message: strings.photosPermissionMessage,
-    },
+  const ImagePicker = await import("expo-image-picker");
+
+  // 👇 Your custom rationale (good UX)
+  await new Promise<void>((resolve) => {
+    Alert.alert(
+      strings.photosPermissionTitle,
+      strings.photosPermissionMessage,
+      [{ text: "Continue", onPress: () => resolve() }]
+    );
   });
 
-  if (!granted) {
+  const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (!permission.granted) {
     return null;
   }
 

@@ -29,6 +29,7 @@ export const initDB = () => {
       attachments TEXT NOT NULL DEFAULT '[]'
     );
   `);
+    console.log("✅ DB initialized");
 
     try {
         db.execSync(
@@ -67,9 +68,14 @@ export const insertProduct = (
 };
 
 export const fetchAllProducts = (): ProductRow[] => {
-    return db.getAllSync(
-        `SELECT * FROM products ORDER BY end_date ASC`
-    ) as ProductRow[];
+    try {
+        return db.getAllSync(
+            `SELECT * FROM products ORDER BY end_date ASC`
+        ) as ProductRow[];
+    } catch (e) {
+        console.warn("Table not ready yet", e);
+        return [];
+    }
 };
 
 export const fetchProductById = (id: number): ProductRow | null => {
@@ -102,3 +108,11 @@ export const deleteProductById = async (id: number) => {
 };
 
 export { parseAttachments };
+
+export const bootstrapDB = () => {
+    try {
+        initDB();
+    } catch (e) {
+        console.error("DB init failed", e);
+    }
+};

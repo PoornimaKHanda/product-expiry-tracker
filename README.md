@@ -293,3 +293,12 @@ Warrenty ending soon should soemhow tell that it only shows next due 30days item
 remainder and local notifiction working
 
 - Handle permission prompts gracefully
+
+
+🚀 If you want to level it up (optional)
+
+I can help you add:
+
+🔐 optional local encryption (for receipts)
+📦 export/import backup
+🔔 bulletproof notification handling (important for your use case)

@@ -1,5 +1,9 @@
 import { Alert, Linking } from "react-native";
 
+import * as Notifications from "expo-notifications";
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+
 export type PermissionType =
     | "notifications"
     | "camera"
@@ -9,147 +13,95 @@ export type PermissionType =
 
 type CheckResult = { status: string; granted: boolean };
 
-async function safeImport(moduleName: string) {
-    try {
-        // dynamic import so bundlers/tree-shakers don't force native modules in Expo Go
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        return await import(moduleName as any);
-    } catch (e) {
-        return null;
-    }
-}
-
 export async function checkPermission(type: PermissionType): Promise<CheckResult> {
     try {
         if (type === "notifications") {
-            const Notifications = await safeImport("expo-notifications");
-            if (!Notifications) return { status: "unavailable", granted: false };
             const cur = await Notifications.getPermissionsAsync();
-            const granted = !!(cur.granted || cur.status === "granted");
-            return { status: cur.status ?? "unknown", granted };
+            return {
+                status: cur.status ?? "unknown",
+                granted: !!(cur.granted || cur.status === "granted"),
+            };
         }
 
         if (type === "camera") {
-            const Camera = await safeImport("expo-camera");
-            if (!Camera) return { status: "unavailable", granted: false };
-            const cur = await (Camera.getCameraPermissionsAsync?.() ?? Camera.getPermissionsAsync?.());
-            const granted = !!(cur?.granted || cur?.status === "granted");
-            return { status: cur?.status ?? "unknown", granted };
-        }
-
-        if (type === "location") {
-            const Location = await safeImport("expo-location");
-            if (!Location) return { status: "unavailable", granted: false };
-            const cur = await (Location.getForegroundPermissionsAsync?.() ?? Location.getPermissionsAsync?.());
-            const granted = !!(cur?.granted || cur?.status === "granted");
-            return { status: cur?.status ?? "unknown", granted };
+            const cur = await Camera.getCameraPermissionsAsync();
+            return {
+                status: cur.status ?? "unknown",
+                granted: !!(cur.granted || cur.status === "granted"),
+            };
         }
 
         if (type === "mediaLibrary") {
-            const Media = await safeImport("expo-media-library");
-            if (!Media) return { status: "unavailable", granted: false };
-            const cur = await (Media.getPermissionsAsync?.() ?? Media.getMediaLibraryPermissionsAsync?.());
-            const granted = !!(cur?.granted || cur?.status === "granted");
-            return { status: cur?.status ?? "unknown", granted };
-        }
-
-        if (type === "contacts") {
-            const Contacts = await safeImport("expo-contacts");
-            if (!Contacts) return { status: "unavailable", granted: false };
-            const cur = await Contacts.getPermissionsAsync?.();
-            const granted = !!(cur?.granted || cur?.status === "granted");
-            return { status: cur?.status ?? "unknown", granted };
+            const cur = await MediaLibrary.getPermissionsAsync();
+            return {
+                status: cur.status ?? "unknown",
+                granted: !!(cur.granted || cur.status === "granted"),
+            };
         }
 
         return { status: "unknown", granted: false };
-    } catch (e) {
-        return { status: "error", granted: false };
-    }
-}
-
-export async function requestPermission(type: PermissionType): Promise<CheckResult> {
-    try {
-        if (type === "notifications") {
-            const Notifications = await safeImport("expo-notifications");
-            if (!Notifications) return { status: "unavailable", granted: false };
-            const req = await Notifications.requestPermissionsAsync();
-            const granted = !!(req.granted || req.status === "granted");
-            return { status: req.status ?? "unknown", granted };
-        }
-
-        if (type === "camera") {
-            const Camera = await safeImport("expo-camera");
-            if (!Camera) return { status: "unavailable", granted: false };
-            const req = await (Camera.requestCameraPermissionsAsync?.() ?? Camera.requestPermissionsAsync?.());
-            const granted = !!(req?.granted || req?.status === "granted");
-            return { status: req?.status ?? "unknown", granted };
-        }
-
-        if (type === "location") {
-            const Location = await safeImport("expo-location");
-            if (!Location) return { status: "unavailable", granted: false };
-            const req = await (Location.requestForegroundPermissionsAsync?.() ?? Location.requestPermissionsAsync?.());
-            const granted = !!(req?.granted || req?.status === "granted");
-            return { status: req?.status ?? "unknown", granted };
-        }
-
-        if (type === "mediaLibrary") {
-            const Media = await safeImport("expo-media-library");
-            if (!Media) return { status: "unavailable", granted: false };
-            const req = await (Media.requestPermissionsAsync?.() ?? Media.requestMediaLibraryPermissionsAsync?.());
-            const granted = !!(req?.granted || req?.status === "granted");
-            return { status: req?.status ?? "unknown", granted };
-        }
-
-        if (type === "contacts") {
-            const Contacts = await safeImport("expo-contacts");
-            if (!Contacts) return { status: "unavailable", granted: false };
-            const req = await Contacts.requestPermissionsAsync?.();
-            const granted = !!(req?.granted || req?.status === "granted");
-            return { status: req?.status ?? "unknown", granted };
-        }
-
-        return { status: "unknown", granted: false };
-    } catch (e) {
+    } catch {
         return { status: "error", granted: false };
     }
 }
 
 export async function ensurePermission(
     type: PermissionType,
-    options?: { rationale?: { title: string; message: string } }
+    options?: {
+        rationale?: {
+            title: string;
+            message: string;
+        };
+    }
 ): Promise<boolean> {
-    const cur = await checkPermission(type);
-    if (cur.granted) return true;
+    const current = await checkPermission(type);
 
-    const requested = await requestPermission(type);
-    if (requested.granted) return true;
+    // ✅ Already granted
+    if (current.granted) return true;
 
-    // If still denied, show rationale and offer to open settings
-    const rationale = options?.rationale;
-    return new Promise((resolve) => {
-        const title = rationale?.title ?? "Permission required";
-        const message = rationale?.message ??
-            "This feature requires additional permissions. Open settings to enable it.";
-        Alert.alert(title, message, [
-            { text: "Cancel", style: "cancel", onPress: () => resolve(false) },
-            {
-                text: "Open Settings",
-                onPress: async () => {
-                    try {
-                        await Linking.openSettings();
-                    } catch (e) {
-                        // noop
-                    }
-                    resolve(false);
+    // ⚠️ Show rationale before asking
+    if (options?.rationale) {
+        await new Promise<void>((resolve) => {
+            Alert.alert(
+                options.rationale!.title,
+                options.rationale!.message,
+                [{ text: "Continue", onPress: () => resolve() }]
+            );
+        });
+    }
+
+    // 🔐 Request permission
+    let result: { status?: string; granted?: boolean } = {};
+
+    try {
+        if (type === "notifications") {
+            result = await Notifications.requestPermissionsAsync();
+        } else if (type === "camera") {
+            result = await Camera.requestCameraPermissionsAsync();
+        } else if (type === "mediaLibrary") {
+            result = await MediaLibrary.requestPermissionsAsync();
+        }
+    } catch (e) {
+        console.error("Permission request failed", e);
+        return false;
+    }
+
+    const granted = !!(result.granted || result.status === "granted");
+
+    // ❌ If denied → guide to settings
+    if (!granted) {
+        Alert.alert(
+            "Permission Required",
+            "Please enable permission from settings to continue.",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Open Settings",
+                    onPress: () => Linking.openSettings(),
                 },
-            },
-        ]);
-    });
-}
+            ]
+        );
+    }
 
-export default {
-    checkPermission,
-    requestPermission,
-    ensurePermission,
-};
+    return granted;
+}
