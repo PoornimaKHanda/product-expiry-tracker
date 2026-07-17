@@ -1,12 +1,12 @@
 import { ProductProvider } from "@/contexts/ProductContext";
+import { bootstrapDB } from "@/utils/db";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
-import { initDB } from "../utils/db";
 import { setupNotificationPermissions } from "../utils/notifications";
 
+bootstrapDB();
 export default function RootLayout() {
   useEffect(() => {
-    initDB();
     setupNotificationPermissions().catch((error) => {
       console.warn("Unable to set up notifications", error);
     });
