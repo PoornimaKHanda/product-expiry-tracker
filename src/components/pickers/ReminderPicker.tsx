@@ -1,12 +1,11 @@
-import { PickerModal } from "@/components/pickers/PickerModal";
-import { strings } from "@/i18n";
+import { strings } from "@/src/i18n";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useReminderOptions } from "../hooks/usePickerOptions";
-import { CommonStyles } from "../styles/common";
-import { PickerStyles } from "../styles/pickers";
-import { Typography } from "../theme/typography";
-
+import { useReminderOptions } from "../../hooks/usePickerOptions";
+import { CommonStyles } from "../../styles/common";
+import { PickerStyles } from "../../styles/pickers";
+import { Typography } from "../../theme/typography";
+import { PickerModal } from "./PickerModal";
 type Props = {
   value: string;
   onChange: (val: string) => void;
@@ -43,22 +42,24 @@ export function ReminderPicker({ value, onChange }: Props) {
         {strings.reminder}
       </Text>
 
-      <TouchableOpacity
-        onPress={() => setVisible(true)}
-        style={CommonStyles.pickerTrigger}
-      >
-        <Text
-          style={[
-            Typography.body,
-            value
-              ? PickerStyles.triggerTextActive
-              : PickerStyles.triggerTextInactive,
-          ]}
+      <View style={CommonStyles.pickerWrapper}>
+        <TouchableOpacity
+          onPress={() => setVisible(true)}
+          style={CommonStyles.pickerTrigger}
         >
-          {selectedLabel}
-        </Text>
-        <Text style={PickerStyles.triggerIcon}>▼</Text>
-      </TouchableOpacity>
+          <Text
+            style={[
+              Typography.body,
+              value
+                ? PickerStyles.triggerTextActive
+                : PickerStyles.triggerTextInactive,
+            ]}
+          >
+            {selectedLabel}
+          </Text>
+          <Text style={PickerStyles.triggerIcon}>▼</Text>
+        </TouchableOpacity>
+      </View>
 
       <PickerModal
         visible={visible}

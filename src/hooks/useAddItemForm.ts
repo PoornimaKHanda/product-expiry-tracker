@@ -1,12 +1,12 @@
-import { strings } from "@/i18n";
-import { fetchProductById, insertProduct, parseAttachments, updateProduct } from "@/utils/db";
+import { strings } from "@/src/i18n";
 import {
     deleteAttachmentFile,
     finalizePendingAttachments,
     saveAttachmentFromUri,
     syncRemovedAttachments,
-} from "@/utils/attachments";
-import { scheduleDevTestNotification, scheduleItemNotifications } from "@/utils/notifications";
+} from "@/src/utils/attachments";
+import { fetchProductById, insertProduct, parseAttachments, updateProduct } from "@/src/utils/db";
+import { scheduleDevTestNotification, scheduleItemNotifications } from "@/src/utils/notifications";
 import { router } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";

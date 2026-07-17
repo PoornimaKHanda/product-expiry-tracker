@@ -1,4 +1,4 @@
-import { strings } from "@/i18n";
+import { strings } from "@/src/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
 

@@ -1,7 +1,10 @@
-import { strings } from "@/i18n";
-import { AttachmentStyles } from "@/styles/attachments";
-import { Typography } from "@/theme/typography";
-import { pickImageFromCamera, pickImageFromLibrary } from "@/utils/pickImage";
+import { strings } from "@/src/i18n";
+import {
+  pickImageFromCamera,
+  pickImageFromLibrary,
+} from "@/src/utils/pickImage";
+import { AttachmentStyles } from "@/src/styles/attachments";
+import { Typography } from "@/src/theme/typography";
 import { Ionicons } from "@expo/vector-icons";
 import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
 

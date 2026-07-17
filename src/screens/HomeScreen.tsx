@@ -4,18 +4,17 @@ import {
   ItemActionSheet,
   ItemCard,
   SectionHeader,
-} from "@/components/ui";
-import { useProductsContext } from "@/contexts/ProductContext";
-import { strings } from "@/i18n";
-import { parseAttachments } from "@/utils/db";
-import { CommonStyles } from "@/styles/common";
-import { ModalStyles } from "@/styles/modals";
-import { ScreenStyles } from "@/styles/screens";
-import { Typography } from "@/theme/typography";
-import { formatDate } from "@/utils/date";
-import { deleteProductById } from "@/utils/db";
-import { deleteProductAttachments } from "@/utils/attachments";
-import { cancelItemNotifications } from "@/utils/notifications";
+} from "@/src/components/ui";
+import { useProductsContext } from "@/src/contexts/ProductContext";
+import { strings } from "@/src/i18n";
+import { CommonStyles } from "@/src/styles/common";
+import { ModalStyles } from "@/src/styles/modals";
+import { ScreenStyles } from "@/src/styles/screens";
+import { Typography } from "@/src/theme/typography";
+import { deleteProductAttachments } from "@/src/utils/attachments";
+import { formatDate } from "@/src/utils/date";
+import { deleteProductById, parseAttachments } from "@/src/utils/db";
+import { cancelItemNotifications } from "@/src/utils/notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";

@@ -1,5 +1,5 @@
-import { ensurePermission } from "@/hooks/usePermission";
-import { strings } from "@/i18n";
+import { ensurePermission } from "@/src/hooks/usePermission";
+import { strings } from "@/src/i18n";
 import { isRunningInExpoGo } from "expo";
 import { Platform } from "react-native";
 

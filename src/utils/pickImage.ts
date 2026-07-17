@@ -1,5 +1,5 @@
-import { ensurePermission } from "@/hooks/usePermission";
-import { strings } from "@/i18n";
+import { ensurePermission } from "@/src/hooks/usePermission";
+import { strings } from "@/src/i18n";
 import { Alert } from "react-native";
 
 async function launchPicker(
@@ -10,13 +10,13 @@ async function launchPicker(
   const result =
     mode === "camera"
       ? await ImagePicker.launchCameraAsync({
-          mediaTypes: ["images"],
-          quality: 0.8,
-        })
+        mediaTypes: ["images"],
+        quality: 0.8,
+      })
       : await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ["images"],
-          quality: 0.8,
-        });
+        mediaTypes: ["images"],
+        quality: 0.8,
+      });
 
   if (result.canceled || !result.assets[0]?.uri) {
     return null;

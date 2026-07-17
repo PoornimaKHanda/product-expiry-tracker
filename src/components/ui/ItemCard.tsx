@@ -1,4 +1,4 @@
-import { strings } from "@/i18n";
+import { strings } from "@/src/i18n";
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
 import { ItemCardStyles } from "../../styles/item-card";

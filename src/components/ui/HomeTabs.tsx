@@ -1,5 +1,5 @@
-import { strings } from "@/i18n";
-import { CommonStyles } from "@/styles/common";
+import { strings } from "@/src/i18n";
+import { CommonStyles } from "@/src/styles/common";
 import { Text, TouchableOpacity, View } from "react-native";
 
 type TabKey = "home" | "all";

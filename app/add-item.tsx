@@ -1,2 +1,2 @@
-import AddItemScreen from "../screens/AddItemScreen";
+import AddItemScreen from "../src/screens/AddItemScreen";
 export default AddItemScreen;

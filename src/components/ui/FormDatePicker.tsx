@@ -1,4 +1,4 @@
-import { strings } from "@/i18n";
+import { strings } from "@/src/i18n";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";

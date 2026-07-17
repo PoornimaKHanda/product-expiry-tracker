@@ -1,9 +1,14 @@
-import { CategoryPicker, ReminderPicker } from "@/components/pickers";
-import { AppButton, AttachmentSection, FormDatePicker, FormInput } from "@/components/ui";
-import { strings } from "@/i18n";
-import { CommonStyles } from "@/styles/common";
-import { ScreenStyles } from "@/styles/screens";
-import { Typography } from "@/theme/typography";
+import { CategoryPicker, ReminderPicker } from "@/src/components/pickers";
+import {
+  AppButton,
+  AttachmentSection,
+  FormDatePicker,
+  FormInput,
+} from "@/src/components/ui";
+import { strings } from "@/src/i18n";
+import { CommonStyles } from "@/src/styles/common";
+import { ScreenStyles } from "@/src/styles/screens";
+import { Typography } from "@/src/theme/typography";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useLayoutEffect } from "react";

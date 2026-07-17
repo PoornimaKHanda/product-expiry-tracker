@@ -1,4 +1,4 @@
-import { strings } from "@/i18n";
+import { strings } from "@/src/i18n";
 import {
   FlatList,
   Modal,

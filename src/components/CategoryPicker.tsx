@@ -1,11 +1,11 @@
-import { strings } from "@/i18n";
+import { PickerModal } from "@/src/components/pickers/PickerModal";
+import { strings } from "@/src/i18n";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useCategoryOptions } from "../../hooks/usePickerOptions";
-import { CommonStyles } from "../../styles/common";
-import { PickerStyles } from "../../styles/pickers";
-import { Typography } from "../../theme/typography";
-import { PickerModal } from "./PickerModal";
+import { useCategoryOptions } from "../hooks/usePickerOptions";
+import { CommonStyles } from "../styles/common";
+import { PickerStyles } from "../styles/pickers";
+import { Typography } from "../theme/typography";
 
 type Props = {
   value: string;
@@ -35,24 +35,22 @@ export function CategoryPicker({ value, onChange }: Props) {
         {strings.category}
       </Text>
 
-      <View style={CommonStyles.pickerWrapper}>
-        <TouchableOpacity
-          onPress={() => setVisible(true)}
-          style={CommonStyles.pickerTrigger}
+      <TouchableOpacity
+        onPress={() => setVisible(true)}
+        style={CommonStyles.pickerTrigger}
+      >
+        <Text
+          style={[
+            Typography.body,
+            value
+              ? PickerStyles.triggerTextActive
+              : PickerStyles.triggerTextInactive,
+          ]}
         >
-          <Text
-            style={[
-              Typography.body,
-              value
-                ? PickerStyles.triggerTextActive
-                : PickerStyles.triggerTextInactive,
-            ]}
-          >
-            {value || strings.selectCategory}
-          </Text>
-          <Text style={PickerStyles.triggerIcon}>▼</Text>
-        </TouchableOpacity>
-      </View>
+          {value || strings.selectCategory}
+        </Text>
+        <Text style={PickerStyles.triggerIcon}>▼</Text>
+      </TouchableOpacity>
 
       <PickerModal
         visible={visible}
