@@ -7,10 +7,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { CommonStyles } from "../../styles/common";
-import { ModalStyles } from "../../styles/modals";
-import { PickerStyles } from "../../styles/pickers";
-import { Typography } from "../../theme/typography";
+import { CommonStyles } from "@/src/styles/common";
+import { ModalStyles } from "@/src/styles/modals";
+import { PickerStyles } from "@/src/styles/pickers";
+import { Typography } from "@/src/theme/typography";
 
 type PickerOption = {
   label: string;

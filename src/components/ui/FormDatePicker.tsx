@@ -2,8 +2,8 @@ import { strings } from "@/src/i18n";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
-import { FormStyles } from "../../styles/forms";
-import { Typography } from "../../theme/typography";
+import { FormStyles } from "@/src/styles/forms";
+import { Typography } from "@/src/theme/typography";
 
 type Props = {
   label: string;

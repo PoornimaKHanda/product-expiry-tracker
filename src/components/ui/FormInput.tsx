@@ -1,6 +1,6 @@
 import { Text, TextInput, View } from "react-native";
-import { FormStyles } from "../../styles/forms";
-import { Typography } from "../../theme/typography";
+import { FormStyles } from "@/src/styles/forms";
+import { Typography } from "@/src/theme/typography";
 
 type Props = {
   label: string;

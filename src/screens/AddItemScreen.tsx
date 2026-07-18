@@ -14,7 +14,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAddItemForm } from "../hooks/useAddItemForm";
+import { useAddItemForm } from "@/src/hooks";
 
 export default function AddItemScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();

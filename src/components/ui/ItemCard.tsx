@@ -1,8 +1,8 @@
 import { strings } from "@/src/i18n";
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
-import { ItemCardStyles } from "../../styles/item-card";
-import { Colors } from "../../theme/colors";
+import { ItemCardStyles } from "@/src/styles/item-card";
+import { Colors } from "@/src/theme/colors";
 
 type Props = {
   name: string;

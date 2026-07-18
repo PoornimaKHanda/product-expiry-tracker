@@ -1,10 +1,10 @@
 import { strings } from "@/src/i18n";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useCategoryOptions } from "../../hooks/usePickerOptions";
-import { CommonStyles } from "../../styles/common";
-import { PickerStyles } from "../../styles/pickers";
-import { Typography } from "../../theme/typography";
+import { useCategoryOptions } from "@/src/hooks/usePickerOptions";
+import { CommonStyles } from "@/src/styles/common";
+import { PickerStyles } from "@/src/styles/pickers";
+import { Typography } from "@/src/theme/typography";
 import { PickerModal } from "./PickerModal";
 
 type Props = {

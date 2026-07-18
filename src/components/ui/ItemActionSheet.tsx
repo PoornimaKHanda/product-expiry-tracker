@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { ActionSheetStyles } from "../../styles/action-sheet";
+import { ActionSheetStyles } from "@/src/styles/action-sheet";
 
 type Props = {
   visible: boolean;

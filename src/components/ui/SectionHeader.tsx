@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
-import { SectionHeaderStyles } from "../../styles/section-header";
-import { Typography } from "../../theme/typography";
+import { SectionHeaderStyles } from "@/src/styles/section-header";
+import { Typography } from "@/src/theme/typography";
 
 type Props = {
   title: string;
