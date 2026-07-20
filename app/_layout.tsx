@@ -4,9 +4,17 @@ import { Stack } from "expo-router";
 import { useEffect } from "react";
 import { setupNotificationPermissions } from "../src/utils/notifications";
 
-bootstrapDB();
 export default function RootLayout() {
+
   useEffect(() => {
+    bootstrapDB();
+    // ✅ Lazy import (prevents crash if native module missing)
+    (async () => {
+      const { AttachmentService } =
+        await import("@/src/services/AttachmentService");
+      await AttachmentService.cleanupOrphanedFiles();
+    })();
+
     setupNotificationPermissions().catch((error) => {
       console.warn("Unable to set up notifications", error);
     });

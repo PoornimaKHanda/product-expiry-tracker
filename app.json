@@ -61,7 +61,8 @@
           "photosPermission": "Allow Product Expiry Tracker to access receipt photos.",
           "savePhotosPermission": "Allow Product Expiry Tracker to save receipt photos."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true

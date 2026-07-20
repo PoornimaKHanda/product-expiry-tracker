@@ -302,3 +302,15 @@ I can help you add:
 🔐 optional local encryption (for receipts)
 📦 export/import backup
 🔔 bulletproof notification handling (important for your use case)
+
+few things first, attachments service is working fine, these are list of todo's. 
+1) in edit mode if user doesn't change anything and just click on update, no action should be performed. 
+2) attachments limit should be 3mb (i think this is enough for warrenty and receipts), also compress and keep just to save up storage. if file storage exceeds 100mb, inform user. 
+3) i need separate tab for viewing all images stored in app. 
+4) item when it has attachments, it has tect saying has attachmnet, that is not clickable. Instead make it as view attachment and on click should show all attahcments of that item. 
+5) when adding additional notes in addItem, keyboard masks the ui section, user won't know what he/she is writing on notes. That section should be visible. 
+6)Category based filtering in addItems. 
+7)Purchase date should be defaulted to today unless user clicks on it and sets date. 
+8) about remainder scheduling i need deep dive discussion. 
+9) currently there are mandatory fields to be filled in add item, but not starred, that needs to be done. 
+10) home screen shows expiring in 30days, there should be an option to select (7days, 30dyas, this year)or inform user these are expiring in 30 days.

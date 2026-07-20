@@ -1,18 +1,13 @@
 import { strings } from "@/src/i18n";
-import {
-    deleteAttachmentFile,
-    finalizePendingAttachments,
-    saveAttachmentFromUri,
-    syncRemovedAttachments,
-} from "@/src/utils/attachments";
-import { fetchProductById, insertProduct, parseAttachments, updateProduct } from "@/src/utils/db";
+import { ProductService } from "@/src/services/ProductService";
 import { scheduleDevTestNotification, scheduleItemNotifications } from "@/src/utils/notifications";
 import { router } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
 export function useAddItemForm(id?: string) {
     const isEdit = Boolean(id);
+
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [isExpiry, setIsExpiry] = useState(true);
@@ -20,23 +15,22 @@ export function useAddItemForm(id?: string) {
     const [endDate, setEndDate] = useState<string | undefined>(undefined);
     const [reminderOption, setReminderOption] = useState("automatic");
     const [notes, setNotes] = useState("");
+
+    // 👉 Now holds TEMP URIs (not persisted yet)
     const [attachments, setAttachments] = useState<string[]>([]);
     const [isAttachmentBusy, setIsAttachmentBusy] = useState(false);
-    const originalAttachments = useRef<string[]>([]);
 
+    // ✅ Load existing product (EDIT mode)
     useEffect(() => {
-        if (!isEdit || !id) {
-            return;
-        }
+        if (!isEdit || !id) return;
 
-        const product = fetchProductById(Number(id));
+        const product = ProductService.getProductById(Number(id));
+
         if (!product) {
             Alert.alert(strings.itemNotFound);
             router.back();
             return;
         }
-
-        const savedAttachments = parseAttachments(product.attachments);
 
         setName(product.name);
         setCategory(product.category || "");
@@ -45,31 +39,29 @@ export function useAddItemForm(id?: string) {
         setEndDate(product.end_date);
         setReminderOption(product.reminder_option || "automatic");
         setNotes(product.notes || "");
-        setAttachments(savedAttachments);
-        originalAttachments.current = savedAttachments;
+
+        // already parsed by service
+        setAttachments(product.attachments);
     }, [id, isEdit]);
 
-    const addAttachment = useCallback(
-        async (sourceUri: string) => {
-            setIsAttachmentBusy(true);
-            try {
-                const productId = isEdit && id ? Number(id) : undefined;
-                const savedUri = await saveAttachmentFromUri(sourceUri, productId);
-                setAttachments((current) => [...current, savedUri]);
-            } catch {
-                Alert.alert(strings.errorSavingAttachment);
-            } finally {
-                setIsAttachmentBusy(false);
-            }
-        },
-        [id, isEdit],
-    );
-
-    const removeAttachment = useCallback((uri: string) => {
-        setAttachments((current) => current.filter((item) => item !== uri));
-        void deleteAttachmentFile(uri);
+    // ✅ Add attachment (TEMP only)
+    const addAttachment = useCallback(async (sourceUri: string) => {
+        setIsAttachmentBusy(true);
+        try {
+            setAttachments((current) => [...current, sourceUri]);
+        } catch {
+            Alert.alert(strings.errorSavingAttachment);
+        } finally {
+            setIsAttachmentBusy(false);
+        }
     }, []);
 
+    // ✅ Remove attachment (TEMP only)
+    const removeAttachment = useCallback((uri: string) => {
+        setAttachments((current) => current.filter((item) => item !== uri));
+    }, []);
+
+    // ✅ Save (ALL logic delegated to ProductService)
     const onSave = useCallback(async () => {
         if (!name || !startDate || !endDate) {
             Alert.alert(strings.fillRequiredFields);
@@ -78,13 +70,11 @@ export function useAddItemForm(id?: string) {
 
         try {
             const type = isExpiry ? "expiry" : "warranty";
-            let productId = isEdit && id ? Number(id) : 0;
-            let savedAttachments = attachments;
+
+            let productId: number;
 
             if (isEdit && id) {
-                await syncRemovedAttachments(originalAttachments.current, attachments);
-                updateProduct(
-                    Number(id),
+                await ProductService.updateProduct(Number(id), {
                     name,
                     category,
                     type,
@@ -92,24 +82,12 @@ export function useAddItemForm(id?: string) {
                     endDate,
                     reminderOption,
                     notes,
-                    attachments,
-                );
+                    tempAttachments: attachments,
+                });
+
+                productId = Number(id);
             } else {
-                productId = Number(
-                    insertProduct(
-                        name,
-                        category,
-                        type,
-                        startDate,
-                        endDate,
-                        reminderOption,
-                        notes,
-                        [],
-                    ),
-                );
-                savedAttachments = await finalizePendingAttachments(attachments, productId);
-                updateProduct(
-                    productId,
+                productId = await ProductService.createProduct({
                     name,
                     category,
                     type,
@@ -117,10 +95,11 @@ export function useAddItemForm(id?: string) {
                     endDate,
                     reminderOption,
                     notes,
-                    savedAttachments,
-                );
+                    tempAttachments: attachments,
+                });
             }
 
+            // ✅ Notifications still triggered here (UI concern)
             await scheduleItemNotifications({
                 id: productId,
                 name,
@@ -131,6 +110,7 @@ export function useAddItemForm(id?: string) {
 
             router.back();
         } catch (error) {
+            console.error("SAVE ERROR:", error);
             Alert.alert(strings.errorSavingItem);
         }
     }, [
@@ -146,6 +126,7 @@ export function useAddItemForm(id?: string) {
         startDate,
     ]);
 
+    // ✅ Dev testing helper (unchanged)
     const onTestNotification = useCallback(async () => {
         try {
             const result = await scheduleDevTestNotification();
@@ -186,5 +167,5 @@ export function useAddItemForm(id?: string) {
         onSave,
         onTestNotification,
     };
-}
 
+}
