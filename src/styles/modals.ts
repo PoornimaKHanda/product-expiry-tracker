@@ -22,6 +22,12 @@ export const ModalStyles = StyleSheet.create({
         color: Colors.textPrimary,
         fontWeight: '700',
     },
+    message: {
+        color: Colors.textPrimary,
+        fontSize: 17,
+        lineHeight: 26,
+        marginBottom: 8,
+    },
     actionsRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',

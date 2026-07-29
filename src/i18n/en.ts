@@ -86,6 +86,11 @@ export const en = {
 
     itemNotFound: "Item not found",
     fillRequiredFields: "Please fill required fields",
+    productNameCannotBeEmpty: "Product name cannot be empty.",
+    formValidationTitle: "Please check the form",
+    endDateMustBeAfterStartDate: "End date must be after the purchase date.",
+    notesTooLong: (maxLength: number) =>
+        `Notes must be ${maxLength} characters or fewer.`,
     errorSavingItem: "Error saving item",
     errorSchedulingTestNotification: "Error scheduling test notification",
     errorSavingAttachment: "Could not save the photo. Please try again.",

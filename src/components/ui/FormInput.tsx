@@ -9,6 +9,7 @@ type Props = {
   onChangeText: (text: string) => void;
   required?: boolean; // ⭐ NEW
   multiline?: boolean; // (we added earlier)
+  maxLength?: number;
 };
 
 export function FormInput({
@@ -18,6 +19,7 @@ export function FormInput({
   onChangeText,
   required = false,
   multiline = false,
+  maxLength,
 }: Props) {
   return (
     <View style={FormStyles.fieldGroup}>
@@ -28,6 +30,7 @@ export function FormInput({
         value={value}
         onChangeText={onChangeText}
         multiline={multiline}
+        maxLength={maxLength}
         style={[
           FormStyles.textInput,
           multiline && FormStyles.multilineTextInput,

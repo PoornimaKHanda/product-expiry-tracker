@@ -1,6 +1,7 @@
 import { CategoryPicker, ReminderPicker } from "@/src/components/pickers";
 import {
   AppButton,
+  AppAlertModal,
   AttachmentSection,
   FormDatePicker,
   FormInput,
@@ -46,6 +47,8 @@ export default function AddItemScreen() {
     isAttachmentBusy,
     isEdit,
     onSave,
+    formError,
+    dismissFormError,
     onTestNotification,
   } = useAddItemForm(id);
 
@@ -119,6 +122,7 @@ export default function AddItemScreen() {
           value={notes}
           onChangeText={setNotes}
           multiline
+          maxLength={1000}
         />
 
         {__DEV__ ? (
@@ -137,6 +141,12 @@ export default function AddItemScreen() {
           onPress={onSave}
         />
       </SafeAreaView>
+      <AppAlertModal
+        visible={Boolean(formError)}
+        title={strings.formValidationTitle}
+        message={formError ?? ""}
+        onClose={dismissFormError}
+      />
     </KeyboardAvoidingView>
   );
 }

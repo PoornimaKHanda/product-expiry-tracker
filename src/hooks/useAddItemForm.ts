@@ -5,6 +5,35 @@ import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
+const MAX_NOTES_LENGTH = 1000;
+
+type FormInput = {
+    name: string;
+    startDate: string;
+    endDate: string;
+    notes: string;
+};
+
+function validate(input: FormInput): string | null {
+    if (!input.name) {
+        return strings.productNameCannotBeEmpty;
+    }
+
+    if (!input.startDate || !input.endDate) {
+        return strings.fillRequiredFields;
+    }
+
+    if (input.endDate <= input.startDate) {
+        return strings.endDateMustBeAfterStartDate;
+    }
+
+    if (input.notes.length > MAX_NOTES_LENGTH) {
+        return strings.notesTooLong(MAX_NOTES_LENGTH);
+    }
+
+    return null;
+}
+
 export function useAddItemForm(id?: string) {
     const isEdit = Boolean(id);
     const today = new Date().toISOString().split("T")[0];
@@ -16,6 +45,7 @@ export function useAddItemForm(id?: string) {
     const [endDate, setEndDate] = useState<string | undefined>(undefined);
     const [reminderOption, setReminderOption] = useState("automatic");
     const [notes, setNotes] = useState("");
+    const [formError, setFormError] = useState<string | null>(null);
 
     // 👉 Now holds TEMP URIs (not persisted yet)
     const [attachments, setAttachments] = useState<string[]>([]);
@@ -64,9 +94,19 @@ export function useAddItemForm(id?: string) {
 
     // ✅ Save (ALL logic delegated to ProductService)
     const onSave = useCallback(async () => {
-        console.log("clicked")
-        if (!name || !startDate || !endDate) {
-            Alert.alert(strings.fillRequiredFields);
+        const trimmedName = name.trim();
+        const trimmedCategory = category.trim();
+        const trimmedNotes = notes.trim();
+        const input = {
+            name: trimmedName,
+            startDate,
+            endDate: endDate ?? "",
+            notes: trimmedNotes,
+        };
+        const error = validate(input);
+
+        if (error) {
+            setFormError(error);
             return;
         }
 
@@ -77,26 +117,26 @@ export function useAddItemForm(id?: string) {
 
             if (isEdit && id) {
                 await ProductService.updateProduct(Number(id), {
-                    name,
-                    category,
+                    name: trimmedName,
+                    category: trimmedCategory,
                     type,
                     startDate,
-                    endDate,
+                    endDate: input.endDate,
                     reminderOption,
-                    notes,
+                    notes: trimmedNotes,
                     tempAttachments: attachments,
                 });
 
                 productId = Number(id);
             } else {
                 productId = await ProductService.createProduct({
-                    name,
-                    category,
+                    name: trimmedName,
+                    category: trimmedCategory,
                     type,
                     startDate,
-                    endDate,
+                    endDate: input.endDate,
                     reminderOption,
-                    notes,
+                    notes: trimmedNotes,
                     tempAttachments: attachments,
                 });
             }
@@ -104,8 +144,8 @@ export function useAddItemForm(id?: string) {
             // ✅ Notifications still triggered here (UI concern)
             await scheduleItemNotifications({
                 id: productId,
-                name,
-                endDate,
+                name: trimmedName,
+                endDate: input.endDate,
                 type,
                 reminderOption,
             });
@@ -113,7 +153,7 @@ export function useAddItemForm(id?: string) {
             router.back();
         } catch (error) {
             console.error("SAVE ERROR:", error);
-            Alert.alert(strings.errorSavingItem);
+            setFormError(strings.errorSavingItem);
         }
     }, [
         attachments,
@@ -167,6 +207,8 @@ export function useAddItemForm(id?: string) {
         isAttachmentBusy,
         isEdit,
         onSave,
+        formError,
+        dismissFormError: () => setFormError(null),
         onTestNotification,
     };
 
