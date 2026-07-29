@@ -19,6 +19,35 @@ export const FormStyles = StyleSheet.create({
         height: 120,
         textAlignVertical: "top",
     },
+    chipContainer: {
+        flexDirection: "row",
+        gap: Spacing.sm,
+        marginTop: Spacing.sm,
+    },
+
+    chip: {
+        paddingVertical: Spacing.sm,
+        paddingHorizontal: Spacing.md,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: Colors.border,
+        backgroundColor: Colors.surface,
+    },
+
+    chipText: {
+        fontSize: 14,
+        color: Colors.textPrimary,
+    },
+
+    chipSelected: {
+        backgroundColor: Colors.primary,
+        borderColor: Colors.primary,
+    },
+
+    chipTextSelected: {
+        color: Colors.surface,
+        fontWeight: "600",
+    },
     pickerTrigger: {
         borderWidth: 1,
         borderColor: Colors.border,

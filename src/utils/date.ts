@@ -11,3 +11,12 @@ export const isWithinNextDays = (dateStr: string, days: number) => {
 export const formatDate = (dateStr: string) => {
     return new Date(dateStr).toDateString();
 };
+
+export function addYears(dateStr: string, years: number): string {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    const date = new Date(year, month - 1, day);
+    date.setFullYear(date.getFullYear() + years);
+    const formattedMonth = String(date.getMonth() + 1).padStart(2, "0");
+    const formattedDay = String(date.getDate()).padStart(2, "0");
+    return `${date.getFullYear()}-${formattedMonth}-${formattedDay}`;
+}

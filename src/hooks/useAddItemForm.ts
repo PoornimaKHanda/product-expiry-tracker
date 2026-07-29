@@ -4,6 +4,7 @@ import { scheduleDevTestNotification, scheduleItemNotifications } from "@/src/ut
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
+import { addYears } from "../utils/date";
 
 const MAX_NOTES_LENGTH = 1000;
 
@@ -46,10 +47,27 @@ export function useAddItemForm(id?: string) {
     const [reminderOption, setReminderOption] = useState("automatic");
     const [notes, setNotes] = useState("");
     const [formError, setFormError] = useState<string | null>(null);
+    const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
 
     // 👉 Now holds TEMP URIs (not persisted yet)
     const [attachments, setAttachments] = useState<string[]>([]);
     const [isAttachmentBusy, setIsAttachmentBusy] = useState(false);
+
+    const onWarrantyDurationSelect = (years: number) => {
+        setSelectedDuration(years);
+        setEndDate(addYears(startDate, years));
+    };
+
+    const handleEndDateChange = (date: string) => {
+        setSelectedDuration(null);
+        setEndDate(date);
+    };
+
+    useEffect(() => {
+        if (!isExpiry && selectedDuration !== null) {
+            setEndDate(addYears(startDate, selectedDuration));
+        }
+    }, [isExpiry, selectedDuration, startDate]);
 
     // ✅ Load existing product (EDIT mode)
     useEffect(() => {
@@ -62,7 +80,6 @@ export function useAddItemForm(id?: string) {
             router.back();
             return;
         }
-
         setName(product.name);
         setCategory(product.category || "");
         setIsExpiry(product.type === "expiry");
@@ -196,7 +213,7 @@ export function useAddItemForm(id?: string) {
         startDate,
         setStartDate,
         endDate,
-        setEndDate,
+        setEndDate: handleEndDateChange,
         reminderOption,
         setReminderOption,
         notes,
@@ -210,6 +227,8 @@ export function useAddItemForm(id?: string) {
         formError,
         dismissFormError: () => setFormError(null),
         onTestNotification,
+        selectedDuration,
+        onWarrantyDurationSelect,
     };
 
 }
