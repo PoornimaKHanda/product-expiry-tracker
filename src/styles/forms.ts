@@ -15,6 +15,10 @@ export const FormStyles = StyleSheet.create({
         backgroundColor: Colors.surface,
         color: Colors.textPrimary,
     },
+    multilineTextInput: {
+        height: 120,
+        textAlignVertical: "top",
+    },
     pickerTrigger: {
         borderWidth: 1,
         borderColor: Colors.border,

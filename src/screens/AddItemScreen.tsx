@@ -13,7 +13,12 @@ import { Typography } from "@/src/theme/typography";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useLayoutEffect } from "react";
-import { ScrollView, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddItemScreen() {
@@ -51,8 +56,16 @@ export default function AddItemScreen() {
   }, [navigation, isEdit]);
 
   return (
-    <View style={ScreenStyles.root}>
-      <ScrollView style={CommonStyles.screen}>
+    <KeyboardAvoidingView
+      style={ScreenStyles.root}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={40} // tweak if needed
+    >
+      <ScrollView
+        style={CommonStyles.screen}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: 50 }} // 👈 IMPORTANT
+      >
         <Text style={ScreenStyles.modeBadge}>
           {isEdit ? strings.editMode : strings.addMode}
         </Text>
@@ -67,6 +80,7 @@ export default function AddItemScreen() {
           placeholder={strings.productNamePlaceholder}
           value={name}
           onChangeText={setName}
+          required
         />
         <CategoryPicker value={category} onChange={setCategory} />
 
@@ -84,11 +98,13 @@ export default function AddItemScreen() {
           label={isExpiry ? strings.openedPurchaseDate : strings.purchaseDate}
           date={startDate}
           onChange={(d) => setStartDate(d.toISOString().split("T")[0])}
+          required
         />
         <FormDatePicker
           label={isExpiry ? strings.expiryDate : strings.warrantyEndDate}
           date={endDate}
           onChange={(d) => setEndDate(d.toISOString().split("T")[0])}
+          required
         />
         <ReminderPicker value={reminderOption} onChange={setReminderOption} />
         <AttachmentSection
@@ -102,6 +118,7 @@ export default function AddItemScreen() {
           placeholder={strings.notesPlaceholder}
           value={notes}
           onChangeText={setNotes}
+          multiline
         />
 
         {__DEV__ ? (
@@ -120,6 +137,6 @@ export default function AddItemScreen() {
           onPress={onSave}
         />
       </SafeAreaView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

@@ -1,17 +1,23 @@
 import { strings } from "@/src/i18n";
+import { RequiredLabel } from "@/src/components/ui/RequiredLabel";
+import { FormStyles } from "@/src/styles/forms";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
-import { FormStyles } from "@/src/styles/forms";
-import { Typography } from "@/src/theme/typography";
 
 type Props = {
   label: string;
   date?: string;
+  required?: boolean;
   onChange: (date: Date) => void;
 };
 
-export function FormDatePicker({ label, date, onChange }: Props) {
+export function FormDatePicker({
+  label,
+  date,
+  required = false,
+  onChange,
+}: Props) {
   const [showPicker, setShowPicker] = useState(false);
 
   const handleChange = (_event: any, selectedDate?: Date) => {
@@ -21,7 +27,7 @@ export function FormDatePicker({ label, date, onChange }: Props) {
 
   return (
     <View style={FormStyles.fieldGroup}>
-      <Text style={Typography.label}>{label}</Text>
+      <RequiredLabel required={required}>{label}</RequiredLabel>
       <Pressable
         onPress={() => setShowPicker(true)}
         style={FormStyles.pickerTrigger}

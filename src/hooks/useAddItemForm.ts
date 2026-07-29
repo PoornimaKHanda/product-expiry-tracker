@@ -7,11 +7,12 @@ import { Alert } from "react-native";
 
 export function useAddItemForm(id?: string) {
     const isEdit = Boolean(id);
+    const today = new Date().toISOString().split("T")[0];
 
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [isExpiry, setIsExpiry] = useState(true);
-    const [startDate, setStartDate] = useState<string | undefined>(undefined);
+    const [startDate, setStartDate] = useState<string>(today);
     const [endDate, setEndDate] = useState<string | undefined>(undefined);
     const [reminderOption, setReminderOption] = useState("automatic");
     const [notes, setNotes] = useState("");
@@ -42,7 +43,7 @@ export function useAddItemForm(id?: string) {
 
         // already parsed by service
         setAttachments(product.attachments);
-    }, [id, isEdit]);
+    }, [id]);
 
     // ✅ Add attachment (TEMP only)
     const addAttachment = useCallback(async (sourceUri: string) => {
@@ -63,6 +64,7 @@ export function useAddItemForm(id?: string) {
 
     // ✅ Save (ALL logic delegated to ProductService)
     const onSave = useCallback(async () => {
+        console.log("clicked")
         if (!name || !startDate || !endDate) {
             Alert.alert(strings.fillRequiredFields);
             return;

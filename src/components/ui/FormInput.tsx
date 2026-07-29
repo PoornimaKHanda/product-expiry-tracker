@@ -1,23 +1,37 @@
-import { Text, TextInput, View } from "react-native";
+import { TextInput, View } from "react-native";
+import { RequiredLabel } from "@/src/components/ui/RequiredLabel";
 import { FormStyles } from "@/src/styles/forms";
-import { Typography } from "@/src/theme/typography";
 
 type Props = {
   label: string;
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
+  required?: boolean; // ⭐ NEW
+  multiline?: boolean; // (we added earlier)
 };
 
-export function FormInput({ label, placeholder, value, onChangeText }: Props) {
+export function FormInput({
+  label,
+  placeholder,
+  value,
+  onChangeText,
+  required = false,
+  multiline = false,
+}: Props) {
   return (
     <View style={FormStyles.fieldGroup}>
-      <Text style={Typography.label}>{label}</Text>
+      <RequiredLabel required={required}>{label}</RequiredLabel>
+
       <TextInput
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        style={FormStyles.textInput}
+        multiline={multiline}
+        style={[
+          FormStyles.textInput,
+          multiline && FormStyles.multilineTextInput,
+        ]}
       />
     </View>
   );
