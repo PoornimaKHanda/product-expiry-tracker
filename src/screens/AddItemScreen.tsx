@@ -1,7 +1,8 @@
 import { CategoryPicker, ReminderPicker } from "@/src/components/pickers";
+import { WarrantyDurationPicker } from "@/src/components/pickers/WarrantyDurationPicker";
 import {
-  AppButton,
   AppAlertModal,
+  AppButton,
   AttachmentSection,
   FormDatePicker,
   FormInput,
@@ -14,12 +15,7 @@ import { Typography } from "@/src/theme/typography";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useLayoutEffect } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Text
-} from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddItemScreen() {
@@ -50,6 +46,8 @@ export default function AddItemScreen() {
     formError,
     dismissFormError,
     onTestNotification,
+    selectedDuration,
+    onWarrantyDurationSelect,
   } = useAddItemForm(id);
 
   useLayoutEffect(() => {
@@ -103,6 +101,12 @@ export default function AddItemScreen() {
           onChange={(d) => setStartDate(d.toISOString().split("T")[0])}
           required
         />
+        {!isExpiry && (
+          <WarrantyDurationPicker
+            onSelect={onWarrantyDurationSelect}
+            selected={selectedDuration}
+          />
+        )}
         <FormDatePicker
           label={isExpiry ? strings.expiryDate : strings.warrantyEndDate}
           date={endDate}
