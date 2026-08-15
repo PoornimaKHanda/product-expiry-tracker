@@ -1,6 +1,6 @@
+import productRepository from '@/src/features/products/repository/productRepository';
 import { Directory, File, Paths } from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { fetchAllProducts, parseAttachments } from '@/src/utils/db';
 
 // 📁 /documents/attachments
 const baseDir = new Directory(Paths.document, 'attachments');
@@ -22,11 +22,11 @@ function getFileNameFromUri(uri: string) {
 }
 
 async function getUsedFiles(): Promise<Set<string>> {
-    const products = fetchAllProducts();
+    const products = productRepository.getAllProducts();
     const used = new Set<string>();
 
     products.forEach((p) => {
-        const attachments = parseAttachments(p.attachments);
+        const attachments = p.attachments || [];
         attachments.forEach((uri) => {
             const name = getFileNameFromUri(uri);
             if (name) used.add(name);
@@ -135,3 +135,5 @@ export const AttachmentService = {
         }
     },
 };
+
+export default AttachmentService;

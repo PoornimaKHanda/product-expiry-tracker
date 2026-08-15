@@ -7,21 +7,15 @@ import {
   FormDatePicker,
   FormInput,
 } from "@/src/components/ui";
-import { useAddItemForm } from "@/src/hooks";
+import { useAddItemScreenController } from "@/src/features/products/hooks/useAddItemScreenController";
 import { strings } from "@/src/i18n";
 import { CommonStyles } from "@/src/styles/common";
 import { ScreenStyles } from "@/src/styles/screens";
 import { Typography } from "@/src/theme/typography";
-import { useNavigation } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
-import { useLayoutEffect } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddItemScreen() {
-  const { id } = useLocalSearchParams<{ id?: string }>();
-  const navigation = useNavigation();
-
   const {
     name,
     setName,
@@ -48,13 +42,7 @@ export default function AddItemScreen() {
     onTestNotification,
     selectedDuration,
     onWarrantyDurationSelect,
-  } = useAddItemForm(id);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: isEdit ? "Edit item" : "Add item",
-    });
-  }, [navigation, isEdit]);
+  } = useAddItemScreenController();
 
   return (
     <KeyboardAvoidingView
@@ -65,7 +53,7 @@ export default function AddItemScreen() {
       <ScrollView
         style={CommonStyles.screen}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: 50 }} // 👈 IMPORTANT
+        contentContainerStyle={ScreenStyles.listContent}
       >
         <Text style={ScreenStyles.modeBadge}>
           {isEdit ? strings.editMode : strings.addMode}

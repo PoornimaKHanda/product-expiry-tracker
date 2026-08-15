@@ -1,64 +1,39 @@
 import {
   AppButton,
   HomeTabs,
-  ItemActionSheet,
+  ProductContextMenu,
   ItemCard,
   SectionHeader,
 } from "@/src/components/ui";
-import { useProductsContext } from "@/src/contexts/ProductContext";
+import { useHomeScreenController } from "@/src/features/products/hooks/useHomeScreenController";
 import { strings } from "@/src/i18n";
 import { CommonStyles } from "@/src/styles/common";
 import { ModalStyles } from "@/src/styles/modals";
 import { ScreenStyles } from "@/src/styles/screens";
+import { Colors } from "@/src/theme/colors";
 import { Typography } from "@/src/theme/typography";
-import { deleteProductAttachments } from "@/src/utils/attachments";
 import { formatDate } from "@/src/utils/date";
-import { deleteProductById, parseAttachments } from "@/src/utils/db";
-import { cancelItemNotifications } from "@/src/utils/notifications";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type Product = {
-  id: number;
-  name: string;
-  category: string;
-  end_date: string;
-  type: "expiry" | "warranty";
-  attachments: string;
-};
-
 export default function HomeScreen() {
-  const router = useRouter();
-  const { expiringSoon, warrantyEndingSoon, allProducts, refreshProducts } =
-    useProductsContext();
-  const [selectedItem, setSelectedItem] = useState<Product | null>(null);
-  const [activeTab, setActiveTab] = useState<"home" | "all">("home");
-  const [showSheet, setShowSheet] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const {
+    activeTab,
+    setActiveTab,
+    showContextMenu,
+    setShowContextMenu,
+    showDeleteConfirm,
+    setShowDeleteConfirm,
+    openContextMenu,
+    confirmDelete,
+    onEdit,
+    onDelete,
+    onAddNew,
+    sections,
+  } = useHomeScreenController();
 
-  const openActions = (item: Product) => {
-    setSelectedItem(item);
-    setShowSheet(true);
-  };
-
-  const confirmDelete = async () => {
-    if (!selectedItem) return;
-    setShowDeleteConfirm(false);
-    await cancelItemNotifications(selectedItem.id);
-    await deleteProductAttachments(selectedItem.id);
-    await deleteProductById(selectedItem.id);
-    setSelectedItem(null);
-    refreshProducts();
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      refreshProducts();
-    }, [refreshProducts]),
-  );
+  const { expiringSoon, warrantyEndingSoon, allProducts } = sections;
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={ScreenStyles.root}>
@@ -81,10 +56,10 @@ export default function HomeScreen() {
                   key={item.id}
                   name={item.name}
                   subtitle={item.category}
-                  dateLabel={strings.expiresOn(formatDate(item.end_date))}
+                  dateLabel={strings.expiresOn(formatDate(item.endDate))}
                   itemType={item.type}
-                  hasAttachments={parseAttachments(item.attachments).length > 0}
-                  onMenuPress={() => openActions(item)}
+                  hasAttachments={(item.attachments || []).length > 0}
+                  onMenuPress={() => openContextMenu(item)}
                 />
               ))
             )}
@@ -100,10 +75,10 @@ export default function HomeScreen() {
                   key={item.id}
                   name={item.name}
                   subtitle={item.category}
-                  dateLabel={strings.warrantyEndsOn(formatDate(item.end_date))}
+                  dateLabel={strings.warrantyEndsOn(formatDate(item.endDate))}
                   itemType={item.type}
-                  hasAttachments={parseAttachments(item.attachments).length > 0}
-                  onMenuPress={() => openActions(item)}
+                  hasAttachments={(item.attachments || []).length > 0}
+                  onMenuPress={() => openContextMenu(item)}
                 />
               ))
             )}
@@ -125,13 +100,13 @@ export default function HomeScreen() {
                   subtitle={item.category}
                   dateLabel={
                     item.type === "expiry"
-                      ? strings.expiresOn(formatDate(item.end_date))
-                      : strings.warrantyEndsOn(formatDate(item.end_date))
+                      ? strings.expiresOn(formatDate(item.endDate))
+                      : strings.warrantyEndsOn(formatDate(item.endDate))
                   }
                   itemType={item.type}
                   showTypeBadge
-                  hasAttachments={parseAttachments(item.attachments).length > 0}
-                  onMenuPress={() => openActions(item)}
+                  hasAttachments={(item.attachments || []).length > 0}
+                  onMenuPress={() => openContextMenu(item)}
                 />
               ))
             )}
@@ -146,43 +121,28 @@ export default function HomeScreen() {
           <AppButton
             kind="full"
             label={strings.addProduct}
-            onPress={() => router.push("/add-item")}
+            onPress={onAddNew}
           />
         </View>
       ) : null}
 
-      <ItemActionSheet
-        visible={showSheet}
-        onClose={() => setShowSheet(false)}
-        onEdit={() => {
-          if (!selectedItem) return;
-          setShowSheet(false);
-          router.push({
-            pathname: "/add-item",
-            params: { id: selectedItem.id },
-          });
-        }}
-        onDelete={() => {
-          if (!selectedItem) return;
-          setShowSheet(false);
-          setShowDeleteConfirm(true);
-        }}
+      <ProductContextMenu
+        visible={showContextMenu}
+        onClose={() => setShowContextMenu(false)}
+        onEdit={onEdit}
+        onDelete={onDelete}
       />
 
       <Modal visible={showDeleteConfirm} transparent animationType="fade">
         <View style={ModalStyles.overlay}>
           <View style={ModalStyles.card}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 18,
-              }}
-            >
-              <Ionicons name="warning-outline" size={22} color="#E53935" />
-              <Text
-                style={[ModalStyles.title, { marginLeft: 10, marginBottom: 0 }]}
-              >
+            <View style={ModalStyles.deleteHeaderRow}>
+              <Ionicons
+                name="warning-outline"
+                size={22}
+                color={Colors.danger}
+              />
+              <Text style={[ModalStyles.title, ModalStyles.deleteTitle]}>
                 {strings.deleteItem}
               </Text>
             </View>
@@ -207,7 +167,10 @@ export default function HomeScreen() {
                 style={ModalStyles.actionButton}
               >
                 <Text
-                  style={[ModalStyles.actionButtonText, { color: "#E53935" }]}
+                  style={[
+                    ModalStyles.actionButtonText,
+                    { color: Colors.danger },
+                  ]}
                 >
                   {strings.delete}
                 </Text>

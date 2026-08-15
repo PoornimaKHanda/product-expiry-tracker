@@ -1,5 +1,7 @@
 import { ensurePermission } from "@/src/hooks/usePermission";
 import { strings } from "@/src/i18n";
+import { getItemNotificationIdentifier, getReminderOffsets } from '@/src/features/products/notifications/reminderConfig';
+import { Colors } from '@/src/theme/colors';
 import { isRunningInExpoGo } from "expo";
 import { Platform } from "react-native";
 
@@ -10,11 +12,11 @@ export type TrackableType = "expiry" | "warranty";
 export type ReminderOptionValue = string;
 export type ReminderOffsetDays = number;
 
-type NotificationSetupOptions = {
+export type NotificationSetupOptions = {
   allowExpoGo?: boolean;
 };
 
-type ScheduleItemNotificationInput = {
+export type ScheduleItemNotificationInput = {
   id: number;
   name: string;
   endDate: string;
@@ -42,9 +44,6 @@ const hasNotificationPermission = (settings: {
 export async function setupNotificationPermissions(
   options: NotificationSetupOptions = {},
 ) {
-  // Actual notification behavior should be tested in a development build.
-  // Expo Go on Android logs SDK 53+ remote notification warnings even though
-  // this app only needs local reminders.
   if (__DEV__ && isRunningInExpoGo() && !options.allowExpoGo) {
     return false;
   }
@@ -68,7 +67,7 @@ export async function setupNotificationPermissions(
         description: strings.notificationChannelDescription,
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#2563eb",
+        lightColor: Colors.primary,
       },
     );
   }
@@ -90,12 +89,6 @@ export async function setupNotificationPermissions(
   return hasNotificationPermission(requestedSettings);
 }
 
-const getItemNotificationIdentifier = (
-  productId: number,
-  type: TrackableType,
-  offsetDays: ReminderOffsetDays,
-) => `product-${productId}-${type}-${offsetDays}-days`;
-
 const getReminderDate = (endDate: string, offsetDays: ReminderOffsetDays) => {
   const [year, month, day] = endDate.split("-").map(Number);
   const reminderDate = new Date(year, month - 1, day, 9, 0, 0, 0);
@@ -103,34 +96,6 @@ const getReminderDate = (endDate: string, offsetDays: ReminderOffsetDays) => {
   reminderDate.setDate(reminderDate.getDate() - offsetDays);
 
   return reminderDate;
-};
-
-const getReminderOffsets = (reminderOption: ReminderOptionValue | undefined) => {
-  if (!reminderOption || reminderOption === "automatic") {
-    return [7, 0];
-  }
-
-  if (reminderOption === "1day") {
-    return [1];
-  }
-
-  if (reminderOption === "1week") {
-    return [7];
-  }
-
-  if (reminderOption === "1month") {
-    return [30];
-  }
-
-  if (reminderOption.startsWith("custom:")) {
-    const parsedDays = Number(reminderOption.split(":")[1]);
-
-    if (Number.isFinite(parsedDays) && parsedDays > 0) {
-      return [parsedDays];
-    }
-  }
-
-  return [7, 0];
 };
 
 const getNotificationCopy = (
@@ -161,7 +126,7 @@ export async function cancelItemNotifications(productId: number) {
 
   await Promise.all(
     (["expiry", "warranty"] as const).flatMap((type) =>
-      [1, 7, 30, 0].map((offsetDays) =>
+      ([...new Set([1, 7, 30, 0])]).map((offsetDays) =>
         Notifications.cancelScheduledNotificationAsync(
           getItemNotificationIdentifier(productId, type, offsetDays as ReminderOffsetDays),
         ),

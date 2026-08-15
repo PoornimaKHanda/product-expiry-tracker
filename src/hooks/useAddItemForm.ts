@@ -1,39 +1,12 @@
+import type { ProductDraft } from '@/src/features/products/types';
 import { strings } from "@/src/i18n";
-import { ProductService } from "@/src/services/ProductService";
-import { scheduleDevTestNotification, scheduleItemNotifications } from "@/src/utils/notifications";
+import { ProductService } from "@/src/features/products/services/ProductService";
+import { scheduleDevTestNotification } from "@/src/features/products/notifications/notificationScheduler";
+import { validateProductDraft } from "@/src/features/products/validation/productValidation";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { addYears } from "../utils/date";
-
-const MAX_NOTES_LENGTH = 1000;
-
-type FormInput = {
-    name: string;
-    startDate: string;
-    endDate: string;
-    notes: string;
-};
-
-function validate(input: FormInput): string | null {
-    if (!input.name) {
-        return strings.productNameCannotBeEmpty;
-    }
-
-    if (!input.startDate || !input.endDate) {
-        return strings.fillRequiredFields;
-    }
-
-    if (input.endDate <= input.startDate) {
-        return strings.endDateMustBeAfterStartDate;
-    }
-
-    if (input.notes.length > MAX_NOTES_LENGTH) {
-        return strings.notesTooLong(MAX_NOTES_LENGTH);
-    }
-
-    return null;
-}
 
 export function useAddItemForm(id?: string) {
     const isEdit = Boolean(id);
@@ -48,20 +21,18 @@ export function useAddItemForm(id?: string) {
     const [notes, setNotes] = useState("");
     const [formError, setFormError] = useState<string | null>(null);
     const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
-
-    // 👉 Now holds TEMP URIs (not persisted yet)
     const [attachments, setAttachments] = useState<string[]>([]);
     const [isAttachmentBusy, setIsAttachmentBusy] = useState(false);
 
-    const onWarrantyDurationSelect = (years: number) => {
+    const onWarrantyDurationSelect = useCallback((years: number) => {
         setSelectedDuration(years);
         setEndDate(addYears(startDate, years));
-    };
+    }, [startDate]);
 
-    const handleEndDateChange = (date: string) => {
+    const handleEndDateChange = useCallback((date: string) => {
         setSelectedDuration(null);
         setEndDate(date);
-    };
+    }, []);
 
     useEffect(() => {
         if (!isExpiry && selectedDuration !== null) {
@@ -69,7 +40,6 @@ export function useAddItemForm(id?: string) {
         }
     }, [isExpiry, selectedDuration, startDate]);
 
-    // ✅ Load existing product (EDIT mode)
     useEffect(() => {
         if (!isEdit || !id) return;
 
@@ -80,19 +50,17 @@ export function useAddItemForm(id?: string) {
             router.back();
             return;
         }
+
         setName(product.name);
         setCategory(product.category || "");
         setIsExpiry(product.type === "expiry");
-        setStartDate(product.start_date);
-        setEndDate(product.end_date);
-        setReminderOption(product.reminder_option || "automatic");
+        setStartDate(product.startDate);
+        setEndDate(product.endDate);
+        setReminderOption(product.reminderOption || "automatic");
         setNotes(product.notes || "");
+        setAttachments(product.attachments || []);
+    }, [id, isEdit]);
 
-        // already parsed by service
-        setAttachments(product.attachments);
-    }, [id]);
-
-    // ✅ Add attachment (TEMP only)
     const addAttachment = useCallback(async (sourceUri: string) => {
         setIsAttachmentBusy(true);
         try {
@@ -104,12 +72,10 @@ export function useAddItemForm(id?: string) {
         }
     }, []);
 
-    // ✅ Remove attachment (TEMP only)
     const removeAttachment = useCallback((uri: string) => {
         setAttachments((current) => current.filter((item) => item !== uri));
     }, []);
 
-    // ✅ Save (ALL logic delegated to ProductService)
     const onSave = useCallback(async () => {
         const trimmedName = name.trim();
         const trimmedCategory = category.trim();
@@ -120,7 +86,7 @@ export function useAddItemForm(id?: string) {
             endDate: endDate ?? "",
             notes: trimmedNotes,
         };
-        const error = validate(input);
+        const error = validateProductDraft(input, strings);
 
         if (error) {
             setFormError(error);
@@ -129,63 +95,29 @@ export function useAddItemForm(id?: string) {
 
         try {
             const type = isExpiry ? "expiry" : "warranty";
-
-            let productId: number;
-
-            if (isEdit && id) {
-                await ProductService.updateProduct(Number(id), {
-                    name: trimmedName,
-                    category: trimmedCategory,
-                    type,
-                    startDate,
-                    endDate: input.endDate,
-                    reminderOption,
-                    notes: trimmedNotes,
-                    tempAttachments: attachments,
-                });
-
-                productId = Number(id);
-            } else {
-                productId = await ProductService.createProduct({
-                    name: trimmedName,
-                    category: trimmedCategory,
-                    type,
-                    startDate,
-                    endDate: input.endDate,
-                    reminderOption,
-                    notes: trimmedNotes,
-                    tempAttachments: attachments,
-                });
-            }
-
-            // ✅ Notifications still triggered here (UI concern)
-            await scheduleItemNotifications({
-                id: productId,
+            const draft: ProductDraft = {
                 name: trimmedName,
-                endDate: input.endDate,
+                category: trimmedCategory,
                 type,
+                startDate,
+                endDate: input.endDate,
                 reminderOption,
-            });
+                notes: trimmedNotes,
+                tempAttachments: attachments,
+            };
 
+            const saved = isEdit && id
+                ? await ProductService.updateProduct(Number(id), draft)
+                : await ProductService.createProduct(draft);
+
+            if (!saved) throw new Error('Save failed');
             router.back();
         } catch (error) {
             console.error("SAVE ERROR:", error);
             setFormError(strings.errorSavingItem);
         }
-    }, [
-        attachments,
-        category,
-        endDate,
-        id,
-        isEdit,
-        isExpiry,
-        name,
-        notes,
-        reminderOption,
-        startDate,
-    ]);
+    }, [attachments, category, endDate, id, isEdit, isExpiry, name, notes, reminderOption, startDate]);
 
-    // ✅ Dev testing helper (unchanged)
     const onTestNotification = useCallback(async () => {
         try {
             const result = await scheduleDevTestNotification();
@@ -230,5 +162,4 @@ export function useAddItemForm(id?: string) {
         selectedDuration,
         onWarrantyDurationSelect,
     };
-
 }

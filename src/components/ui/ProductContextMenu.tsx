@@ -16,7 +16,12 @@ type Props = {
   onDelete: () => void;
 };
 
-export function ItemActionSheet({ visible, onClose, onEdit, onDelete }: Props) {
+export function ProductContextMenu({
+  visible,
+  onClose,
+  onEdit,
+  onDelete,
+}: Props) {
   return (
     <Modal transparent animationType="fade" visible={visible}>
       <View style={ActionSheetStyles.fullScreen}>

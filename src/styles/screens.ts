@@ -16,6 +16,9 @@ export const ScreenStyles = StyleSheet.create({
         // paddingVertical: Spacing.sm,
         backgroundColor: Colors.background,
     },
+    listContent: {
+        paddingBottom: 50,
+    },
     emptyStateText: {
         color: Colors.textSecondary,
         fontSize: 16,

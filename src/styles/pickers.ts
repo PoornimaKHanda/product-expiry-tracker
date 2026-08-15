@@ -31,7 +31,7 @@ export const PickerStyles = StyleSheet.create({
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.4)",
+        backgroundColor: Colors.overlayStrong,
         justifyContent: "center",
     },
     modalCard: {

@@ -4,6 +4,7 @@ import {
   pickImageFromLibrary,
 } from "@/src/utils/pickImage";
 import { AttachmentStyles } from "@/src/styles/attachments";
+import { Colors } from "@/src/theme/colors";
 import { Typography } from "@/src/theme/typography";
 import { Ionicons } from "@expo/vector-icons";
 import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
@@ -77,7 +78,7 @@ export function AttachmentSection({
                 onPress={() => onRemove(uri)}
                 hitSlop={8}
               >
-                <Ionicons name="close" size={14} color="#fff" />
+                <Ionicons name="close" size={14} color={Colors.white} />
               </Pressable>
             </View>
           ))}
