@@ -37,10 +37,10 @@ export const ItemCardStyles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     badgeExpiry: {
-        backgroundColor: "rgba(108, 99, 255, 0.12)",
+        backgroundColor: Colors.badgeExpiryBackground,
     },
     badgeWarranty: {
-        backgroundColor: "rgba(16, 185, 129, 0.12)",
+        backgroundColor: Colors.badgeWarrantyBackground,
     },
     badgeText: {
         fontSize: 12,

@@ -79,3 +79,5 @@ export function useProductsContext() {
   }
   return context;
 }
+
+export default ProductContext;

@@ -6,7 +6,7 @@ import { validateProductDraft } from "@/src/features/products/validation/product
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { addYears } from "../utils/date";
+import { addYears } from "@/src/utils/date";
 
 export function useAddItemForm(id?: string) {
     const isEdit = Boolean(id);

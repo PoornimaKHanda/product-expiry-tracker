@@ -4,7 +4,7 @@ import { Colors } from "../theme/colors";
 export const ModalStyles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.36)",
+        backgroundColor: Colors.overlay,
         justifyContent: "center",
         padding: 20,
     },
@@ -21,6 +21,15 @@ export const ModalStyles = StyleSheet.create({
         marginBottom: 14,
         color: Colors.textPrimary,
         fontWeight: '700',
+    },
+    deleteHeaderRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 18,
+    },
+    deleteTitle: {
+        marginLeft: 10,
+        marginBottom: 0,
     },
     message: {
         color: Colors.textPrimary,
