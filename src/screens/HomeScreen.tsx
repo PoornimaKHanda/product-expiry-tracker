@@ -1,12 +1,19 @@
 import React from "react";
 import {
   AppButton,
+  DeleteConfirmationModal,
+  GalleryPreviewModal,
+  GalleryTabSection,
   HomeTabs,
   ProductContextMenu,
-  ItemCard,
-  SectionHeader,
+  ProductListSection,
+  ReadOnlyDetailModal,
 } from "@/src/features/shared/components";
 import { useHomeScreenController } from "@/src/features/shared/hooks/useHomeScreenController";
+import {
+  getDetailProductId,
+  useReadOnlyItemDetailViewModel,
+} from "@/src/features/shared/viewModels/useReadOnlyItemDetailViewModel";
 import { ensurePermission } from "@/src/hooks/usePermission";
 import { strings } from "@/src/i18n";
 import { CommonStyles } from "@/src/styles/common";
@@ -17,18 +24,9 @@ import { Typography } from "@/src/theme/typography";
 import { formatDate } from "@/src/utils/date";
 import { Ionicons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
-import {
-  Alert,
-  Image,
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { TabType } from "@/src/features/shared/TabType";
 
 export default function HomeScreen() {
   const {
@@ -46,6 +44,15 @@ export default function HomeScreen() {
     sections,
   } = useHomeScreenController();
 
+  const {
+    selectedDetail,
+    selectedAttachment,
+    openDetail,
+    closeDetail,
+    openAttachment,
+    closeAttachment,
+  } = useReadOnlyItemDetailViewModel();
+
   const { expiringSoon, warrantyEndingSoon, allProducts, galleryItems } =
     sections;
 
@@ -57,23 +64,13 @@ export default function HomeScreen() {
   const [isSavingGallery, setIsSavingGallery] = React.useState(false);
   const [gallerySearch, setGallerySearch] = React.useState("");
 
-  const filteredGalleryItems = React.useMemo(() => {
-    const query = gallerySearch.trim().toLowerCase();
-    if (!query) return galleryItems;
-
-    return galleryItems.filter((item) =>
-      item.productName.toLowerCase().includes(query),
-    );
-  }, [galleryItems, gallerySearch]);
-
   const handleSaveToGallery = React.useCallback(async () => {
     if (!selectedGalleryItem) return;
 
     const granted = await ensurePermission("mediaLibrary", {
       rationale: {
-        title: "Photo library access",
-        message:
-          "Save this receipt or photo to your device gallery when you need a quick proof copy.",
+        title: strings.photoLibraryAccessTitle,
+        message: strings.photoLibraryAccessMessage,
       },
     });
 
@@ -83,11 +80,11 @@ export default function HomeScreen() {
 
     try {
       await MediaLibrary.saveToLibraryAsync(selectedGalleryItem.uri);
-      Alert.alert("Saved", "The image was saved to your photo library.");
+      Alert.alert(strings.saved, strings.imageSavedToGalleryMessage);
       setSelectedGalleryItem(null);
     } catch (error) {
       console.error("save-to-library failed", error);
-      Alert.alert("Could not save image", "Please try again.");
+      Alert.alert(strings.imageSaveFailedTitle, strings.imageSaveFailedMessage);
     } finally {
       setIsSavingGallery(false);
     }
@@ -95,8 +92,9 @@ export default function HomeScreen() {
 
   const closeGalleryPreview = React.useCallback(() => {
     setSelectedGalleryItem(null);
+    closeAttachment();
     setIsFullScreenImageOpen(false);
-  }, []);
+  }, [closeAttachment]);
 
   return (
     <SafeAreaView edges={["top", "bottom"]} style={ScreenStyles.root}>
@@ -106,207 +104,78 @@ export default function HomeScreen() {
 
         <HomeTabs activeTab={activeTab} onChange={setActiveTab} />
 
-        {activeTab === "home" ? (
+        {activeTab === TabType.HOME ? (
           <>
-            <SectionHeader title={strings.sectionExpiringSoon} />
-            {expiringSoon.length === 0 ? (
-              <Text style={ScreenStyles.emptyStateText}>
-                {strings.emptyExpiringSoon}
-              </Text>
-            ) : (
-              expiringSoon.map((item) => (
-                <ItemCard
-                  key={item.id}
-                  name={item.name}
-                  subtitle={item.category}
-                  dateLabel={strings.expiresOn(formatDate(item.endDate))}
-                  itemType={item.type}
-                  hasAttachments={(item.attachments || []).length > 0}
-                  onMenuPress={() => openContextMenu(item)}
-                />
-              ))
-            )}
+            <ProductListSection
+              title={strings.sectionExpiringSoon}
+              items={expiringSoon}
+              emptyText={strings.emptyExpiringSoon}
+              onOpenItem={openDetail}
+              onOpenMenu={openContextMenu}
+            />
 
-            <SectionHeader title={strings.sectionWarrantyEndingSoon} />
-            {warrantyEndingSoon.length === 0 ? (
-              <Text style={ScreenStyles.emptyStateText}>
-                {strings.emptyWarrantyEndingSoon}
-              </Text>
-            ) : (
-              warrantyEndingSoon.map((item) => (
-                <ItemCard
-                  key={item.id}
-                  name={item.name}
-                  subtitle={item.category}
-                  dateLabel={strings.warrantyEndsOn(formatDate(item.endDate))}
-                  itemType={item.type}
-                  hasAttachments={(item.attachments || []).length > 0}
-                  onMenuPress={() => openContextMenu(item)}
-                />
-              ))
-            )}
+            <ProductListSection
+              title={strings.sectionWarrantyEndingSoon}
+              items={warrantyEndingSoon}
+              emptyText={strings.emptyWarrantyEndingSoon}
+              onOpenItem={openDetail}
+              onOpenMenu={openContextMenu}
+            />
 
             <View style={ScreenStyles.bottomSpacer} />
           </>
         ) : activeTab === "all" ? (
           <>
-            <SectionHeader title={strings.sectionAllItems} />
-            {allProducts.length === 0 ? (
-              <Text style={ScreenStyles.emptyStateText}>
-                {strings.emptyAllItems}
-              </Text>
-            ) : (
-              allProducts.map((item) => (
-                <ItemCard
-                  key={item.id}
-                  name={item.name}
-                  subtitle={item.category}
-                  dateLabel={
-                    item.type === "expiry"
-                      ? strings.expiresOn(formatDate(item.endDate))
-                      : strings.warrantyEndsOn(formatDate(item.endDate))
-                  }
-                  itemType={item.type}
-                  showTypeBadge
-                  hasAttachments={(item.attachments || []).length > 0}
-                  onMenuPress={() => openContextMenu(item)}
-                />
-              ))
-            )}
+            <ProductListSection
+              title={strings.sectionAllItems}
+              items={allProducts}
+              emptyText={strings.emptyAllItems}
+              showTypeBadge
+              onOpenItem={openDetail}
+              onOpenMenu={openContextMenu}
+            />
 
             <View style={ScreenStyles.bottomSpacer} />
           </>
         ) : (
-          <>
-            <SectionHeader title={strings.galleryTab} />
-            <TextInput
-              value={gallerySearch}
-              onChangeText={setGallerySearch}
-              placeholder="Search by product name"
-              style={ScreenStyles.gallerySearch}
-              placeholderTextColor={Colors.textSecondary}
-            />
-            {filteredGalleryItems.length === 0 ? (
-              <Text style={ScreenStyles.emptyStateText}>
-                {strings.galleryEmptyState}
-              </Text>
-            ) : (
-              <View style={ScreenStyles.galleryGrid}>
-                {filteredGalleryItems.map((item) => (
-                  <TouchableOpacity
-                    key={`${item.productId}-${item.uri}`}
-                    activeOpacity={0.9}
-                    style={ScreenStyles.galleryTile}
-                    onPress={() => setSelectedGalleryItem(item)}
-                  >
-                    <Image
-                      source={{ uri: item.uri }}
-                      style={ScreenStyles.galleryImage}
-                    />
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-
-            <View style={ScreenStyles.bottomSpacer} />
-          </>
+          <GalleryTabSection
+            items={galleryItems}
+            searchValue={gallerySearch}
+            onSearchChange={setGallerySearch}
+            onSelectItem={setSelectedGalleryItem}
+          />
         )}
       </ScrollView>
 
-      <Modal
-        visible={!!selectedGalleryItem && !isFullScreenImageOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={closeGalleryPreview}
-      >
-        <View style={ModalStyles.overlay}>
-          <View style={ModalStyles.card}>
-            <View style={ScreenStyles.previewHeader}>
-              <Text style={ModalStyles.title}>
-                {strings.galleryPreviewTitle}
-              </Text>
-            </View>
+      <ReadOnlyDetailModal
+        visible={!!selectedDetail}
+        item={selectedDetail}
+        onClose={closeDetail}
+        onPreviewAttachment={(detailItem, uri) => {
+          const attachmentItem = {
+            productId: getDetailProductId(detailItem),
+            productName: detailItem.name,
+            category: detailItem.category ?? "",
+            uri,
+          };
 
-            {selectedGalleryItem ? (
-              <>
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={() => setIsFullScreenImageOpen(true)}
-                >
-                  <Image
-                    source={{ uri: selectedGalleryItem.uri }}
-                    style={ScreenStyles.previewImage}
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
-                <Text style={ScreenStyles.previewMeta}>
-                  {selectedGalleryItem.productName} •{" "}
-                  {selectedGalleryItem.category}
-                </Text>
-              </>
-            ) : null}
+          openAttachment(detailItem, uri);
+          setSelectedGalleryItem(attachmentItem);
+        }}
+      />
 
-            <View style={ModalStyles.actionsRow}>
-              <TouchableOpacity
-                onPress={handleSaveToGallery}
-                style={ModalStyles.actionButton}
-                disabled={isSavingGallery}
-              >
-                <Text style={ModalStyles.actionButtonText}>
-                  {isSavingGallery ? "Saving..." : strings.saveToGallery}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <GalleryPreviewModal
+        visible={!!selectedGalleryItem}
+        item={selectedGalleryItem}
+        isFullScreenImageOpen={isFullScreenImageOpen}
+        isSavingGallery={isSavingGallery}
+        onClose={closeGalleryPreview}
+        onOpenFullScreen={() => setIsFullScreenImageOpen(true)}
+        onCloseFullScreen={() => setIsFullScreenImageOpen(false)}
+        onSave={handleSaveToGallery}
+      />
 
-      <Modal
-        visible={isFullScreenImageOpen && !!selectedGalleryItem}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsFullScreenImageOpen(false)}
-      >
-        <TouchableWithoutFeedback
-          onPress={() => setIsFullScreenImageOpen(false)}
-        >
-          <View style={ScreenStyles.fullscreenBackdrop} />
-        </TouchableWithoutFeedback>
-
-        <View style={ScreenStyles.fullscreenContainer}>
-          <ScrollView
-            style={ScreenStyles.fullscreenScroll}
-            contentContainerStyle={ScreenStyles.fullscreenContent}
-            pinchGestureEnabled
-            maximumZoomScale={3}
-            minimumZoomScale={1}
-            centerContent
-            bouncesZoom
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-          >
-            <Image
-              source={{ uri: selectedGalleryItem?.uri }}
-              style={ScreenStyles.fullscreenImage}
-              resizeMode="contain"
-            />
-          </ScrollView>
-
-          <View style={ScreenStyles.fullscreenFooter}>
-            <TouchableOpacity
-              onPress={handleSaveToGallery}
-              style={ModalStyles.actionButton}
-              disabled={isSavingGallery}
-            >
-              <Text style={ModalStyles.actionButtonText}>
-                {isSavingGallery ? "Saving..." : strings.saveToGallery}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {activeTab === "home" ? (
+      {activeTab === TabType.HOME ? (
         <View style={ScreenStyles.bottomActionBar}>
           <AppButton
             kind="full"
@@ -323,52 +192,11 @@ export default function HomeScreen() {
         onDelete={onDelete}
       />
 
-      <Modal visible={showDeleteConfirm} transparent animationType="fade">
-        <View style={ModalStyles.overlay}>
-          <View style={ModalStyles.card}>
-            <View style={ModalStyles.deleteHeaderRow}>
-              <Ionicons
-                name="warning-outline"
-                size={22}
-                color={Colors.danger}
-              />
-              <Text style={[ModalStyles.title, ModalStyles.deleteTitle]}>
-                {strings.deleteItem}
-              </Text>
-            </View>
-            <Text style={[Typography.body, { marginBottom: 24 }]}>
-              {strings.deleteItemConfirm}
-            </Text>
-            <View style={ModalStyles.actionsRow}>
-              <TouchableOpacity
-                onPress={() => setShowDeleteConfirm(false)}
-                style={[
-                  ModalStyles.actionButton,
-                  ModalStyles.actionButtonSecondary,
-                ]}
-              >
-                <Text style={ModalStyles.actionButtonText}>
-                  {strings.cancelButton}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={confirmDelete}
-                style={ModalStyles.actionButton}
-              >
-                <Text
-                  style={[
-                    ModalStyles.actionButtonText,
-                    { color: Colors.danger },
-                  ]}
-                >
-                  {strings.delete}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <DeleteConfirmationModal
+        visible={showDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+      />
     </SafeAreaView>
   );
 }

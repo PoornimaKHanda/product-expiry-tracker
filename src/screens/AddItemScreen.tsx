@@ -5,6 +5,7 @@ import {
   ReminderPicker,
   WarrantyDurationPicker,
 } from "@/src/features/products/components";
+import { ProductType } from "@/src/features/products/types";
 import {
   AppAlertModal,
   AppButton,
@@ -79,11 +80,11 @@ export default function AddItemScreen() {
         <AppButton
           kind="radio"
           options={[
-            { label: strings.expiry, value: "expiry" },
-            { label: strings.warranty, value: "warranty" },
+            { label: strings.expiry, value: ProductType.EXPIRY },
+            { label: strings.warranty, value: ProductType.WARRANTY },
           ]}
-          selected={isExpiry ? "expiry" : "warranty"}
-          onSelect={(val) => setIsExpiry(val === "expiry")}
+          selected={isExpiry ? ProductType.EXPIRY : ProductType.WARRANTY}
+          onSelect={(val) => setIsExpiry(val === ProductType.EXPIRY)}
         />
 
         <FormDatePicker

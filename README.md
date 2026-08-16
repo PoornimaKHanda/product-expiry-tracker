@@ -518,7 +518,6 @@ Personal / Educational Use
 - Expiry filters (7 days / 30 days / year)
 - Category-based filtering / collapsable section for all items
 - on click of item, show read only mode with attachments (same goes for notification as well)
-- On click of notifications, it should show the item in read only mode with attachments(if the item has attachments)
 - On click of List items in home screen, it should show item in read only mode
 - Notification system deep dive
 

@@ -1,8 +1,16 @@
+export const ProductType = {
+    EXPIRY: "expiry",
+    WARRANTY: "warranty",
+} as const;
+
+
+export type ProductType = (typeof ProductType)[keyof typeof ProductType];
+
 export type Product = {
     id: number;
     name: string;
     category: string;
-    type: "expiry" | "warranty";
+    type: ProductType;
     startDate: string;
     endDate: string;
     reminderOption: string;
@@ -14,7 +22,7 @@ export type ProductRecord = {
     id: number;
     name: string;
     category: string;
-    type: "expiry" | "warranty";
+    type: ProductType;
     start_date: string;
     end_date: string;
     reminder_option: string;
@@ -25,7 +33,7 @@ export type ProductRecord = {
 export type ProductDraft = {
     name: string;
     category: string;
-    type: "expiry" | "warranty";
+    type: ProductType;
     startDate: string;
     endDate: string;
     reminderOption: string;
@@ -38,7 +46,7 @@ export type ProductSummary = {
     name: string;
     category: string;
     endDate: string;
-    type: "expiry" | "warranty";
+    type: ProductType;
     attachmentsCount: number;
 };
 

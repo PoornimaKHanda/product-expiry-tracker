@@ -1,5 +1,8 @@
 import productRepository from "@/src/features/products/repository/productRepository";
-import type { Product as CanonicalProduct } from "@/src/features/products/types";
+import {
+  ProductType,
+  type Product as CanonicalProduct,
+} from "@/src/features/products/types";
 import { isWithinNextDays } from "@/src/utils/date";
 import {
   createContext,
@@ -34,7 +37,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     const expiring = products
       .filter(
         (product) =>
-          product.type === "expiry" && isWithinNextDays(product.endDate, 30),
+          product.type === ProductType.EXPIRY &&
+          isWithinNextDays(product.endDate, 30),
       )
       .sort(
         (a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),
@@ -43,7 +47,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     const warranty = products
       .filter(
         (product) =>
-          product.type === "warranty" && isWithinNextDays(product.endDate, 30),
+          product.type === ProductType.WARRANTY &&
+          isWithinNextDays(product.endDate, 30),
       )
       .sort(
         (a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),

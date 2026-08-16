@@ -1,5 +1,6 @@
 import { ensurePermission } from "@/src/hooks/usePermission";
 import { strings } from "@/src/i18n";
+import { ProductType, type ProductType as ProductTypeValue } from "@/src/features/products/types";
 import { getItemNotificationIdentifier, getReminderOffsets } from '@/src/features/products/notifications/reminderConfig';
 import { Colors } from '@/src/theme/colors';
 import { isRunningInExpoGo } from "expo";
@@ -8,7 +9,7 @@ import { Platform } from "react-native";
 export const REMINDER_NOTIFICATION_CHANNEL_ID = "expiry-reminders";
 export const REMINDER_OFFSETS_DAYS = [30, 7, 0] as const;
 
-export type TrackableType = "expiry" | "warranty";
+export type TrackableType = ProductTypeValue;
 export type ReminderOptionValue = string;
 export type ReminderOffsetDays = number;
 
@@ -103,7 +104,7 @@ const getNotificationCopy = (
   type: TrackableType,
   offsetDays: ReminderOffsetDays,
 ) => {
-  if (type === "expiry") {
+  if (type === ProductType.EXPIRY) {
     return {
       title: offsetDays === 0 ? strings.productExpiresToday : strings.productExpiringSoon,
       body: offsetDays === 0
@@ -125,7 +126,7 @@ export async function cancelItemNotifications(productId: number) {
   const Notifications = await import("expo-notifications");
 
   await Promise.all(
-    (["expiry", "warranty"] as const).flatMap((type) =>
+    ([ProductType.EXPIRY, ProductType.WARRANTY] as const).flatMap((type) =>
       ([...new Set([1, 7, 30, 0])]).map((offsetDays) =>
         Notifications.cancelScheduledNotificationAsync(
           getItemNotificationIdentifier(productId, type, offsetDays as ReminderOffsetDays),

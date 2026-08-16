@@ -1,4 +1,4 @@
-import type { ProductDraft } from '@/src/features/products/types';
+import { ProductType, type ProductDraft } from '@/src/features/products/types';
 import { strings } from "@/src/i18n";
 import { ProductService } from "@/src/features/products/services/ProductService";
 import { scheduleDevTestNotification } from "@/src/features/products/notifications/notificationScheduler";
@@ -53,7 +53,7 @@ export function useAddItemForm(id?: string) {
 
         setName(product.name);
         setCategory(product.category || "");
-        setIsExpiry(product.type === "expiry");
+        setIsExpiry(product.type === ProductType.EXPIRY);
         setStartDate(product.startDate);
         setEndDate(product.endDate);
         setReminderOption(product.reminderOption || "automatic");
@@ -94,7 +94,7 @@ export function useAddItemForm(id?: string) {
         }
 
         try {
-            const type = isExpiry ? "expiry" : "warranty";
+            const type = isExpiry ? ProductType.EXPIRY : ProductType.WARRANTY;
             const draft: ProductDraft = {
                 name: trimmedName,
                 category: trimmedCategory,
