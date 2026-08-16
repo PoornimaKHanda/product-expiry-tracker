@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { getReminderOffsets } from '@/src/features/products/notifications/reminderConfig';
+import { buildAttachmentGallery } from '@/src/features/attachments/utils/buildAttachmentGallery';
 import { createProductService } from './helpers/ProductServiceCore';
 
 describe('ProductServiceCore - transactional attachments', () => {
@@ -152,5 +153,38 @@ describe('ProductServiceCore - transactional attachments', () => {
             'Keep me',
             [expect.stringMatching(/replacement/)],
         );
+    });
+
+    it('builds a gallery list from all saved product attachments', () => {
+        const products = [
+            {
+                id: 1,
+                name: 'Milk',
+                category: 'Groceries',
+                type: 'expiry',
+                startDate: '2025-01-01',
+                endDate: '2025-02-01',
+                reminderOption: 'automatic',
+                notes: '',
+                attachments: ['/tmp/receipt-1.jpg', '/tmp/receipt-2.jpg'],
+            },
+            {
+                id: 2,
+                name: 'Phone',
+                category: 'Electronics',
+                type: 'warranty',
+                startDate: '2025-01-01',
+                endDate: '2026-01-01',
+                reminderOption: 'automatic',
+                notes: '',
+                attachments: ['/tmp/receipt-2.jpg', '/tmp/photo-1.jpg'],
+            },
+        ] as any;
+
+        expect(buildAttachmentGallery(products)).toEqual([
+            expect.objectContaining({ productId: 1, uri: '/tmp/receipt-1.jpg' }),
+            expect.objectContaining({ productId: 1, uri: '/tmp/receipt-2.jpg' }),
+            expect.objectContaining({ productId: 2, uri: '/tmp/photo-1.jpg' }),
+        ]);
     });
 });

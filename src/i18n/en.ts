@@ -16,6 +16,10 @@ export const en = {
 
     homeTab: "Home",
     allItemsTab: "All Items",
+    galleryTab: "Gallery",
+    galleryEmptyState: "No saved receipts or photos yet.",
+    saveToGallery: "Save to Gallery",
+    galleryPreviewTitle: "Attachment preview",
     addProduct: "Add Product",
     addItem: "Add Item",
     editItem: "Edit Item",

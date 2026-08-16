@@ -1,5 +1,5 @@
 import { TextInput, View } from "react-native";
-import { RequiredLabel } from "@/src/components/ui/RequiredLabel";
+import { RequiredLabel } from "@/src/features/shared/components/RequiredLabel";
 import { FormStyles } from "@/src/styles/forms";
 
 type Props = {
@@ -7,8 +7,8 @@ type Props = {
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
-  required?: boolean; // ⭐ NEW
-  multiline?: boolean; // (we added earlier)
+  required?: boolean;
+  multiline?: boolean;
   maxLength?: number;
 };
 

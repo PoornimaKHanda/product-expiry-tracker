@@ -1,5 +1,5 @@
 import { strings } from "@/src/i18n";
-import { RequiredLabel } from "@/src/components/ui/RequiredLabel";
+import { RequiredLabel } from "@/src/features/shared/components/RequiredLabel";
 import { FormStyles } from "@/src/styles/forms";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";

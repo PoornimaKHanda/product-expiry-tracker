@@ -1,4 +1,4 @@
-import { useAddItemForm } from '@/src/hooks';
+import { useAddItemForm } from '@/src/features/products/hooks/useAddItemForm';
 import { useNavigation } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import { useLayoutEffect } from 'react';

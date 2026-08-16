@@ -1,3 +1,4 @@
+import { buildAttachmentGallery } from '@/src/features/attachments/utils/buildAttachmentGallery';
 import { useProductsContext } from '@/src/features/products/contexts/ProductContext';
 import { ProductService } from '@/src/features/products/services/ProductService';
 import type { Product as CanonicalProduct } from '@/src/features/products/types';
@@ -10,7 +11,7 @@ export function useHomeScreenController() {
     useProductsContext();
 
   const [selectedItem, setSelectedItem] = useState<CanonicalProduct | null>(null);
-  const [activeTab, setActiveTab] = useState<'home' | 'all'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'all' | 'gallery'>('home');
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -60,6 +61,7 @@ export function useHomeScreenController() {
       expiringSoon,
       warrantyEndingSoon,
       allProducts,
+      galleryItems: buildAttachmentGallery(allProducts),
     }),
     [allProducts, expiringSoon, warrantyEndingSoon],
   );
@@ -79,6 +81,7 @@ export function useHomeScreenController() {
     onEdit,
     onDelete,
     confirmDelete,
+    refreshProducts,
     sections,
   };
 }

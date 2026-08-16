@@ -2,7 +2,7 @@ import { strings } from "@/src/i18n";
 import { CommonStyles } from "@/src/styles/common";
 import { Text, TouchableOpacity, View } from "react-native";
 
-type TabKey = "home" | "all";
+type TabKey = "home" | "all" | "gallery";
 
 type Props = {
   activeTab: TabKey;
@@ -43,6 +43,23 @@ export function HomeTabs({ activeTab, onChange }: Props) {
           ]}
         >
           {strings.allItemsTab}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[
+          CommonStyles.tabButton,
+          activeTab === "gallery" && CommonStyles.tabButtonActive,
+        ]}
+        onPress={() => onChange("gallery")}
+      >
+        <Text
+          style={[
+            CommonStyles.tabButtonText,
+            activeTab === "gallery" && CommonStyles.tabButtonTextActive,
+          ]}
+        >
+          {strings.galleryTab}
         </Text>
       </TouchableOpacity>
     </View>

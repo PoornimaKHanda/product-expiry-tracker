@@ -1,12 +1,15 @@
-import { CategoryPicker, ReminderPicker } from "@/src/components/pickers";
-import { WarrantyDurationPicker } from "@/src/components/pickers/WarrantyDurationPicker";
+import {
+  CategoryPicker,
+  FormDatePicker,
+  FormInput,
+  ReminderPicker,
+  WarrantyDurationPicker,
+} from "@/src/features/products/components";
 import {
   AppAlertModal,
   AppButton,
   AttachmentSection,
-  FormDatePicker,
-  FormInput,
-} from "@/src/components/ui";
+} from "@/src/features/shared/components";
 import { useAddItemScreenController } from "@/src/features/products/hooks/useAddItemScreenController";
 import { strings } from "@/src/i18n";
 import { CommonStyles } from "@/src/styles/common";

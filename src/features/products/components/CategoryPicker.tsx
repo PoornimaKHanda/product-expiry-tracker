@@ -1,7 +1,7 @@
 import { strings } from "@/src/i18n";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useCategoryOptions } from "@/src/hooks/usePickerOptions";
+import { useCategoryOptions } from "@/src/features/products/hooks/usePickerOptions";
 import { CommonStyles } from "@/src/styles/common";
 import { PickerStyles } from "@/src/styles/pickers";
 import { Typography } from "@/src/theme/typography";
